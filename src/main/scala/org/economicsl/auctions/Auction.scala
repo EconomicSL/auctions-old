@@ -26,13 +26,17 @@ sealed trait Auction[A <: LimitAskOrder with Quantity, B <: LimitBidOrder with P
 
   type OB <: OrderBook[B, collection.GenIterable[(UUID, B)]]
 
-  def fill(order: A): Option[Fill]
+  def fill(order: A): Option[Fill[A, B]]
 
   /** Place a `LimitBidOrder with Persistent with Quantity` into the `OrderBook`.
     *
     * @param order a `LimitBidOrder with Persistent with Quantity` instance to add to the `OrderBook`
     */
   def place(order: B): Unit
+
+  protected def findMatchFor(order: A, orderBook: OB): Option[(UUID, B)]
+
+  protected def formPriceUsing(order: A, matchingOrder: B): Price
 
   /** Underlying `OrderBook` used to store the `LimitBidOrder with Persistent` instances. */
   protected def orderBook: OB
