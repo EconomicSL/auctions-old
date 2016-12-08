@@ -30,11 +30,11 @@ import org.economicsl.auctions.orders.{LimitAskOrder, LimitBidOrder, Persistent,
   * @tparam A a sub-type of `LimitAskOrder with SingleUnit`
   * @tparam B a sub-type of `LimitBidOrder with Persistent with SingleUnit`.
   */
-class SingleUnitAscendingAuction[A <: LimitAskOrder with SingleUnit, B <: LimitBidOrder with Persistent with SingleUnit]
-                                (matchingRule: (A, SortedBidOrderBook[B]) => Option[(UUID, B)],
-                                 pricingRule: (A, B) => Price,
-                                 val tradable: Tradable)
-                                (implicit ordering: Ordering[(UUID, B)])
+class SingleUnitAscendingPriceAuction[A <: LimitAskOrder with SingleUnit, B <: LimitBidOrder with Persistent with SingleUnit]
+                                     (matchingRule: (A, SortedBidOrderBook[B]) => Option[(UUID, B)],
+                                      pricingRule: (A, B) => Price,
+                                      val tradable: Tradable)
+                                     (implicit ordering: Ordering[(UUID, B)])
   extends SingleUnitAuction[A, B] with AscendingBidOrders[A, B] {
 
   final def fill(order: A): Option[Fill[A, B]] = findMatchFor(order, orderBook) map {
@@ -59,13 +59,23 @@ class SingleUnitAscendingAuction[A <: LimitAskOrder with SingleUnit, B <: LimitB
 }
 
 
-object SingleUnitAscendingAuction {
+object SingleUnitAscendingPriceAuction {
 
+  /** Create an instance of a `SingleUnitAscendingPriceAuction`.
+    *
+    * @param matchingRule rule used to match a `LimitAskOrder` with a `LimitBidOrder` taken from a `SortedBidOrderBook`.
+    * @param pricingRule rule used to form the transaction price from the `LimitAskOrder` and the matched `LimitBidOrder`.
+    * @param tradable all `LimitBidOrder` instances stored in the `SortedOrderBook` should be for the same `Tradable`.
+    * @param ordering ordering used to maintain the ordering of the `SortedBidOrderBook`.
+    * @tparam A a sub-type of `LimitAskOrder with SingleUnit`
+    * @tparam B a sub-type of `LimitBidOrder with Persistent with SingleUnit`.
+    */
   def apply[A <: LimitAskOrder with SingleUnit, B <: LimitBidOrder with Persistent with SingleUnit]
            (matchingRule: (A, SortedBidOrderBook[B]) => Option[(UUID, B)],
             pricingRule: (A, B) => Price,
             tradable: Tradable)
-           : SingleUnitAscendingAuction[A, B] = {
-    new SingleUnitAscendingAuction[A, B](matchingRule, pricingRule, tradable)
+           (implicit ordering: Ordering[(UUID, B)])
+           : SingleUnitAscendingPriceAuction[A, B] = {
+    new SingleUnitAscendingPriceAuction[A, B](matchingRule, pricingRule, tradable)(ordering)
   }
 }
