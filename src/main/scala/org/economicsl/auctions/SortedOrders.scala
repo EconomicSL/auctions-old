@@ -15,12 +15,25 @@ limitations under the License.
 */
 package org.economicsl.auctions
 
-import org.economicsl.auctions.orders.{LimitAskOrder, LimitBidOrder, Quantity}
+import org.economicsl.auctions.orderbooks.{SortedAskOrderBook, SortedBidOrderBook}
+import org.economicsl.auctions.orders.{LimitAskOrder, LimitBidOrder, Persistent, Quantity}
 
 
-case class Fill[A <: LimitAskOrder with Quantity, B <: LimitBidOrder with Quantity](askOrder: A, bidOrder: B, price: Price) {
+trait AscendingBidOrders[A <: LimitAskOrder with Quantity, B <: LimitBidOrder with Persistent with Quantity] {
+  this: Auction[A, B] =>
 
-  val quantity: Long = math.min(askOrder.quantity, bidOrder.quantity)
+  type OB = SortedBidOrderBook[B]
+
+  protected def orderBook: OB
 
 }
 
+
+trait DescendingAskOrders[B <: LimitBidOrder with Quantity, A <: LimitAskOrder with Persistent with Quantity] {
+  this: ReverseAuction[B, A] =>
+
+  type OB = SortedAskOrderBook[A]
+
+  protected def orderBook: OB
+
+}

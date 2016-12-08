@@ -13,23 +13,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package org.economicsl.auctions.orders
+package org.economicsl.auctions.orderbooks
 
 import java.util.UUID
 
+import org.economicsl.auctions.orders.{AskOrder, Persistent}
 
-trait LimitBidOrder extends BidOrder with LimitPrice {
-  this: Quantity =>
-
-}
+import scala.collection.immutable
 
 
-object LimitBidOrder {
-
-  /** By default, instances of `LimitBidOrder` are ordered based on `limit` price from highest to lowest */
-  implicit def ordering[B <: LimitBidOrder]: Ordering[(UUID, B)] = LimitPrice.ordering.reverse
-
-  /** The highest priority `LimitBidOrder` is the one with the highest `limit` price. */
-  def priority[B <: LimitBidOrder]: Ordering[(UUID, B)] = LimitPrice.ordering
-
-}
+trait SortedAskOrderBook[A <: AskOrder with Persistent] extends OrderBook[A, immutable.TreeSet[(UUID, A)]]

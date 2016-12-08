@@ -15,6 +15,8 @@ limitations under the License.
 */
 package org.economicsl.auctions.orders
 
+import java.util.UUID
+
 import org.economicsl.auctions.Price
 
 
@@ -35,11 +37,11 @@ object LimitPrice {
 
   /** By default, all `Order` instances that mixin `LimitPrice` are ordered by `limit` from lowest to highest.
     *
-    * @tparam T the sub-type of `Order with LimitPrice` that is being ordered.
+    * @tparam O the sub-type of `Order with LimitPrice` that is being ordered.
     * @return and `Ordering` defined over `Order with LimitPrice` instances of type `T`.
     * @note if two `Order with LimitPrice` instances have the same `limit` price, then the ordering is based on the
     *       unique `issuer` identifier.
     */
-  def ordering[T <: Order with LimitPrice]: Ordering[T] = Ordering.by( order => (order.limit, order.issuer) )
+  def ordering[O <: Order with LimitPrice]: Ordering[(UUID, O)] = Ordering.by { case (_, order) => order.limit }
 
 }
