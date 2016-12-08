@@ -21,6 +21,7 @@ import org.economicsl.auctions.orderbooks.OrderBook
 import org.economicsl.auctions.orders._
 
 
+/** Base trait defining the interface for all `ReverseAuction` instances. */
 sealed trait ReverseAuction[B <: LimitBidOrder with Quantity, A <: LimitAskOrder with Persistent with Quantity] {
 
   type OB <: OrderBook[A, collection.GenIterable[(UUID, A)]]
@@ -32,10 +33,12 @@ sealed trait ReverseAuction[B <: LimitBidOrder with Quantity, A <: LimitAskOrder
 }
 
 
+/** Base trait defining the interface for all `SingleUnitReverseAuction` instances. */
 trait SingleUnitReverseAuction[B <: LimitBidOrder with SingleUnit, A <: LimitAskOrder with Persistent with SingleUnit]
   extends ReverseAuction[B, A]
 
 
+/** Base trait defining the interface for all `MultiUnitReverseAuction` instances. */
 trait MultiUnitReverseAuction[B <: LimitBidOrder with MultiUnit, A <: LimitAskOrder with Persistent with MultiUnit]
   extends ReverseAuction[B, A]
 
