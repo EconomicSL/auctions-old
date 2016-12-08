@@ -28,16 +28,23 @@ sealed trait Auction[A <: LimitAskOrder with Quantity, B <: LimitBidOrder with P
 
   def fill(order: A): Option[Fill]
 
+  /** Place a `LimitBidOrder with Persistent with Quantity` into the `OrderBook`.
+    *
+    * @param order a `LimitBidOrder with Persistent with Quantity` instance to add to the `OrderBook`
+    */
   def place(order: B): Unit
 
+  /** Underlying `OrderBook` used to store the `LimitBidOrder with Persistent` instances. */
   protected def orderBook: OB
 
 }
 
 
+/** Base trait defining the interface for all `SingleUnitAuction` instances. */
 trait SingleUnitAuction[A <: LimitAskOrder with SingleUnit, B <: LimitBidOrder with Persistent with SingleUnit]
   extends Auction[A, B]
 
 
+/** Base trait defining the interface for all `MultiUnitAuction` instances. */
 trait MultiUnitAuction[A <: LimitAskOrder with MultiUnit, B <: LimitBidOrder with Persistent with MultiUnit]
   extends Auction[A, B]
