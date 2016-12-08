@@ -28,6 +28,10 @@ sealed trait ReverseAuction[B <: LimitBidOrder with Quantity, A <: LimitAskOrder
 
   def fill(order: B): Option[Fill]
 
+  /** Place a `LimitAskOrder with Persistent with Quantity` into the `OrderBook`.
+    *
+    * @param order a `LimitAskOrder with Persistent with Quantity` instance to add to the `OrderBook`
+    */
   def place(order: A): Unit
 
 }
