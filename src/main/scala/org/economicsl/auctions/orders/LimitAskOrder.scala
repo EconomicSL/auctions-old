@@ -15,8 +15,22 @@ limitations under the License.
 */
 package org.economicsl.auctions.orders
 
+import java.util.UUID
+
 
 trait LimitAskOrder extends AskOrder with LimitPrice {
   this: Quantity =>
+
+}
+
+
+object LimitAskOrder {
+
+  /** By default, instances of `LimitAskOrder` are ordered based on `limit` price from lowest to highest. */
+  implicit def ordering[A <: LimitAskOrder]: Ordering[(UUID, A)] = LimitPrice.ordering
+
+  /** The highest priority `LimitAskOrder` is the one with the lowest `limit` price. */
+  def priority[A <: LimitAskOrder]: Ordering[(UUID, A)] = LimitPrice.ordering.reverse
+
 
 }

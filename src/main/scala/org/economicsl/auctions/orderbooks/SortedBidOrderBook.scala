@@ -36,6 +36,8 @@ class SortedBidOrderBook[B <: BidOrder with Persistent] private (initialOrders: 
     new SortedBidOrderBook(existingOrders - ((issuer, order)), tradable)(ordering)
   }
 
+  def headOption: Option[(UUID, B)] = existingOrders.headOption
+
   protected val existingOrders: immutable.TreeSet[(UUID, B)] = initialOrders
 
 }

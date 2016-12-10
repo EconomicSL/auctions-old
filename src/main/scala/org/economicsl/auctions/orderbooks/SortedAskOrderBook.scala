@@ -36,6 +36,9 @@ class SortedAskOrderBook[A <: AskOrder with Persistent] private (initialOrders: 
     new SortedAskOrderBook(existingOrders - ((issuer, order)), tradable)(ordering)
   }
 
+  def headOption: Option[(UUID, A)] = existingOrders.headOption
+
+
   protected val existingOrders: immutable.TreeSet[(UUID, A)] = initialOrders
 
 }
