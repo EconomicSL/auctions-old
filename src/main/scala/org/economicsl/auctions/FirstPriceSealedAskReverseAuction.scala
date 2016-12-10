@@ -17,22 +17,22 @@ package org.economicsl.auctions
 
 import java.util.UUID
 
-import org.economicsl.auctions.orderbooks.SortedBidOrderBook
+import org.economicsl.auctions.orderbooks.SortedAskOrderBook
 import org.economicsl.auctions.orders.{LimitAskOrder, LimitBidOrder, Persistent, SingleUnit}
 
 
-class FirstPriceSealedBidAuction(tradable: Tradable)
-  extends SingleUnitAscendingPriceAuction[LimitAskOrder with SingleUnit, LimitBidOrder with Persistent with SingleUnit] {
+class FirstPriceSealedAskReverseAuction(tradable: Tradable)
+  extends SingleUnitDescendingPriceReverseAuction[LimitBidOrder with SingleUnit, LimitAskOrder with Persistent with SingleUnit] {
 
-  type A = LimitAskOrder with SingleUnit
-  type B = LimitBidOrder with Persistent with SingleUnit
+  type B = LimitBidOrder with SingleUnit
+  type A = LimitAskOrder with Persistent with SingleUnit
 
-  def fill(order: A): Option[Fill[A, B]] = {
+  def fill(order: B): Option[Fill[A, B]] = {
     findMatchFor(order, orderBook) map {
-      case (_, bidOrder) =>
-        orderBook = orderBook - (bidOrder.issuer, bidOrder) // SIDE EFFECT!
-        val price = formPriceUsing(order, bidOrder)
-        Fill(order, bidOrder, price)
+      case (_, askOrder) =>
+        orderBook = orderBook - (askOrder.issuer, askOrder) // SIDE EFFECT!
+      val price = formPriceUsing(order, askOrder)
+        Fill(askOrder, order, price)
     }
   }
 
@@ -40,16 +40,16 @@ class FirstPriceSealedBidAuction(tradable: Tradable)
     *
     * @param order a `LimitBidOrder with Persistent with Quantity` instance to add to the `SortedBidOrderBook`
     */
-  def place(order: B): Unit = orderBook - (order.issuer, order)
+  def place(order: A): Unit = orderBook - (order.issuer, order)
 
-  protected def findMatchFor(order: A, orderBook: OB): Option[(UUID, B)] = {
-    orderBook.headOption filter { case (_, bidOrder) => bidOrder.limit >= order.limit }
+  protected def findMatchFor(order: B, orderBook: OB): Option[(UUID, A)] = {
+    orderBook.headOption filter { case (_, askOrder) => askOrder.limit >= order.limit }
   }
 
-  protected def formPriceUsing(order: A, matchingOrder: B): Price = {
+  protected def formPriceUsing(order: B, matchingOrder: A): Price = {
     matchingOrder.limit
   }
 
-  @volatile protected var orderBook: OB = SortedBidOrderBook[B](tradable)
+  @volatile protected var orderBook: OB = SortedAskOrderBook[A](tradable)
 
 }
