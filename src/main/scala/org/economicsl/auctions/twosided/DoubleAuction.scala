@@ -13,10 +13,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package org.economicsl.auctions
+package org.economicsl.auctions.twosided
 
 import org.economicsl.auctions.orders._
 import org.economicsl.auctions.reverse.{MultiUnitReverseAuction, ReverseAuction, SingleUnitReverseAuction}
+import org.economicsl.auctions.{Auction, MultiUnitAuction, SingleUnitAuction}
 
 
 /** Base trait defining the interface for all `DoubleAuction` instances.
