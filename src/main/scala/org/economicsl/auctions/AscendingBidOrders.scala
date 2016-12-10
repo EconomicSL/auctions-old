@@ -15,7 +15,7 @@ limitations under the License.
 */
 package org.economicsl.auctions
 
-import org.economicsl.auctions.orderbooks.{SortedAskOrderBook, SortedBidOrderBook}
+import org.economicsl.auctions.orderbooks.SortedBidOrderBook
 import org.economicsl.auctions.orders.{LimitAskOrder, LimitBidOrder, Persistent, Quantity}
 
 
@@ -29,11 +29,3 @@ trait AscendingBidOrders[A <: LimitAskOrder with Quantity, B <: LimitBidOrder wi
 }
 
 
-trait DescendingAskOrders[B <: LimitBidOrder with Quantity, A <: LimitAskOrder with Persistent with Quantity] {
-  this: ReverseAuction[B, A] =>
-
-  type OB = SortedAskOrderBook[A]
-
-  protected def orderBook: OB
-
-}
