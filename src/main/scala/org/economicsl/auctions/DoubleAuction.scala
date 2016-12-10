@@ -16,6 +16,7 @@ limitations under the License.
 package org.economicsl.auctions
 
 import org.economicsl.auctions.orders._
+import org.economicsl.auctions.reverse.{MultiUnitReverseAuction, ReverseAuction, SingleUnitReverseAuction}
 
 
 /** Base trait defining the interface for all `DoubleAuction` instances.
