@@ -44,10 +44,10 @@ sealed trait DoubleAuction {
   def place(order: Y with Persistent): Unit = auction.place(order)
 
   /** The underlying `Auction` mechanism used to fill `LimitAskOrder` instances. */
-  protected def auction: Auction
+  protected def auction: Auction { type A = X; type B = Y with Persistent }
 
   /** The underlying `ReverseAuction` mechanism used to fill `LimitBidOrder` instances. */
-  protected def reverseAuction: ReverseAuction
+  protected def reverseAuction: ReverseAuction { type B = Y; type A = X with Persistent }
 
 }
 
@@ -59,10 +59,10 @@ sealed trait DoubleAuction {
 trait SingleUnitDoubleAuction extends DoubleAuction {
 
   /** The underlying `SingleAuction` mechanism used to fill `LimitAskOrder` instances. */
-  protected def auction: SingleUnitAuction
+  protected def auction: SingleUnitAuction { type A = X; type B = Y with Persistent }
 
   /** The underlying `SingleUnitReverseAuction` mechanism used to fill `LimitBidOrder` instances. */
-  protected def reverseAuction: SingleUnitReverseAuction
+  protected def reverseAuction: SingleUnitReverseAuction { type B = Y; type A = X with Persistent }
 
 }
 
@@ -74,9 +74,9 @@ trait SingleUnitDoubleAuction extends DoubleAuction {
 trait MultiUnitDoubleAuction extends DoubleAuction {
 
   /** The underlying `MultiUnitAuction` mechanism used to fill `LimitAskOrder` instances. */
-  protected def auction: MultiUnitAuction
+  protected def auction: MultiUnitAuction { type A = X; type B = Y with Persistent }
 
   /** The underlying `MultiUnitReverseAuction` mechanism used to fill `LimitBidOrder` instances. */
-  protected def reverseAuction: MultiUnitReverseAuction
+  protected def reverseAuction: MultiUnitReverseAuction { type B = Y; type A = X with Persistent }
 
 }
