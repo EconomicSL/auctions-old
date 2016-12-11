@@ -20,4 +20,6 @@ package org.economicsl.auctions.orders
 trait Persistent {
   this: Order =>
 
+  val isPersistent: Boolean = true
+
 }
