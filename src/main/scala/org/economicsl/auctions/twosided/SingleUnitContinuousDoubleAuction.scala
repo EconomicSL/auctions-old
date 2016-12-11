@@ -19,7 +19,7 @@ import org.economicsl.auctions.orders.{LimitAskOrder, LimitBidOrder, SingleUnit}
 
 
 /** Base trait defining the interface for all single-unit `ContinuousDoubleAuction` types. */
-trait SingleUnitContinuousDoubleAuction extends ContinuousDoubleAuction with SortedOrderBooks {
+trait SingleUnitContinuousDoubleAuction extends ContinuousDoubleAuction {
 
   type A = LimitAskOrder with SingleUnit
   type B = LimitBidOrder with SingleUnit

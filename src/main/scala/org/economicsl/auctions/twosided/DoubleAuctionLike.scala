@@ -23,13 +23,11 @@ import org.economicsl.auctions.Fill
 
 
 /** Base trait defining the interface for all `DoubleAuction` instances. */
-sealed trait DoubleAuction {
+sealed trait DoubleAuctionLike {
 
   /* Type members will be made progressively tighter in sub-classes... */
   type A <: LimitAskOrder with Quantity
-  type AB <: OrderBook[A with Persistent, collection.GenIterable[(UUID, A with Persistent)]]
   type B <: LimitBidOrder with Quantity
-  type BB <: OrderBook[B with Persistent, collection.GenIterable[(UUID, B with Persistent)]]
 
   /** Place a `LimitAskOrder with Persistent with Quantity` into the `OrderBook`.
     *
@@ -45,6 +43,19 @@ sealed trait DoubleAuction {
     */
   def place(order: B with Persistent): Unit
 
+}
+
+
+/** Base trait defining the interface for all `ContinuousDoubleAuction` types. */
+trait ContinuousDoubleAuction extends DoubleAuctionLike {
+
+  type AB <: OrderBook[A with Persistent, collection.GenIterable[(UUID, A with Persistent)]]
+  type BB <: OrderBook[B with Persistent, collection.GenIterable[(UUID, B with Persistent)]]
+
+  def fill(order: A): Option[Fill[A, B with Persistent]]
+
+  def fill(order: B): Option[Fill[A with Persistent, B]]
+
   protected def askOrderBook: AB
 
   protected def bidOrderBook: BB
@@ -52,22 +63,19 @@ sealed trait DoubleAuction {
 }
 
 
-/** Base trait defining the interface for all `ContinuousDoubleAuction` types. */
-trait ContinuousDoubleAuction extends DoubleAuction {
-
-  def fill(order: A): Option[Fill[A, B with Persistent]]
-
-  def fill(order: B): Option[Fill[A with Persistent, B]]
-
-}
-
-
 /** Base trait defining the interface for all `PeriodicDoubleAuction` types. */
-trait PeriodicDoubleAuction extends DoubleAuction {
+trait PeriodicDoubleAuction extends DoubleAuctionLike {
+
   /* Type members will be made progressively tighter in sub-classes... */
   type A <: LimitAskOrder with Persistent with Quantity
+  type AB <: OrderBook[A, collection.GenIterable[(UUID, A)]]
   type B <: LimitBidOrder with Persistent with Quantity
+  type BB <: OrderBook[B, collection.GenIterable[(UUID, B)]]
 
   def fill(): Option[Iterable[Fill[A, B]]]
+
+  protected def askOrderBook: AB
+
+  protected def bidOrderBook: BB
 
 }
