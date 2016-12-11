@@ -41,9 +41,19 @@ sealed trait ReverseAuction {
 
 
 /** Base trait defining the interface for all `SingleUnitReverseAuction` instances. */
-trait SingleUnitReverseAuction extends ReverseAuction
+trait SingleUnitReverseAuction extends ReverseAuction {
+
+  type B <: LimitBidOrder with SingleUnit
+  type A <: LimitAskOrder with Persistent with SingleUnit
+
+}
 
 
 /** Base trait defining the interface for all `MultiUnitReverseAuction` instances. */
-trait MultiUnitReverseAuction extends ReverseAuction
+trait MultiUnitReverseAuction extends ReverseAuction {
+
+  type B <: LimitBidOrder with MultiUnit
+  type A <: LimitAskOrder with Persistent with MultiUnit
+
+}
 

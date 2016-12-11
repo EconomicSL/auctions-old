@@ -58,6 +58,9 @@ sealed trait DoubleAuction {
   */
 trait SingleUnitDoubleAuction extends DoubleAuction {
 
+  type X <: LimitAskOrder with SingleUnit
+  type Y <: LimitBidOrder with SingleUnit
+
   /** The underlying `SingleAuction` mechanism used to fill `LimitAskOrder` instances. */
   protected def auction: SingleUnitAuction { type A = X; type B = Y with Persistent }
 
@@ -72,6 +75,9 @@ trait SingleUnitDoubleAuction extends DoubleAuction {
   * @note A `MultiUnitDoubleAuction` is a composition of a `MultiUnitAuction` and a `MultiUnitReverseAuction`.
   */
 trait MultiUnitDoubleAuction extends DoubleAuction {
+
+  type X <: LimitAskOrder with MultiUnit
+  type Y <: LimitBidOrder with MultiUnit
 
   /** The underlying `MultiUnitAuction` mechanism used to fill `LimitAskOrder` instances. */
   protected def auction: MultiUnitAuction { type A = X; type B = Y with Persistent }

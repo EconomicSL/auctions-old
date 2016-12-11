@@ -48,8 +48,18 @@ sealed trait Auction {
 
 
 /** Base trait defining the interface for all `SingleUnitAuction` instances. */
-trait SingleUnitAuction extends Auction
+trait SingleUnitAuction extends Auction {
+
+  type A <: LimitAskOrder with SingleUnit
+  type B <: LimitBidOrder with Persistent with SingleUnit
+
+}
 
 
 /** Base trait defining the interface for all `MultiUnitAuction` instances. */
-trait MultiUnitAuction extends Auction
+trait MultiUnitAuction extends Auction {
+
+  type A <: LimitAskOrder with MultiUnit
+  type B <: LimitBidOrder with Persistent with MultiUnit
+
+}
