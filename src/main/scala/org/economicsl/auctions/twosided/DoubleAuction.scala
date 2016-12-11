@@ -15,74 +15,59 @@ limitations under the License.
 */
 package org.economicsl.auctions.twosided
 
+import java.util.UUID
+
+import org.economicsl.auctions.orderbooks.OrderBook
 import org.economicsl.auctions.orders._
-import org.economicsl.auctions.reverse.{MultiUnitReverseAuction, ReverseAuction, SingleUnitReverseAuction}
-import org.economicsl.auctions.{Auction, MultiUnitAuction, SingleUnitAuction}
+import org.economicsl.auctions.Fill
 
 
-/** Base trait defining the interface for all `DoubleAuction` instances.
-  *
-  * @note A `DoubleAuction` is a composition of a `Auction` and a `ReverseAuction`.
-  */
+/** Base trait defining the interface for all `DoubleAuction` instances. */
 sealed trait DoubleAuction {
 
-  type X <: LimitAskOrder with Quantity
-  type Y <: LimitBidOrder with Quantity
+  /* Type members will be made progressively tighter in sub-classes... */
+  type A <: LimitAskOrder with Quantity
+  type AB <: OrderBook[A with Persistent, collection.GenIterable[(UUID, A with Persistent)]]
+  type B <: LimitBidOrder with Quantity
+  type BB <: OrderBook[B with Persistent, collection.GenIterable[(UUID, B with Persistent)]]
 
   /** Place a `LimitAskOrder with Persistent with Quantity` into the `OrderBook`.
     *
     * @param order a `LimitAskOrder with Persistent with Quantity` instance to add to the `OrderBook`
     * @note default implementation simply forwards the `order` to the `place` method of the `reverseAuction`.
     */
-  def place(order: X with Persistent): Unit = reverseAuction.place(order)
+  def place(order: A with Persistent): Unit
 
   /** Place a `LimitBidOrder with Persistent with Quantity` into the `OrderBook`.
     *
     * @param order a `LimitBidOrder with Persistent with Quantity` instance to add to the `OrderBook`
     * @note default implementation simply forwards the `order` to the `place` method of the `auction`.
     */
-  def place(order: Y with Persistent): Unit = auction.place(order)
+  def place(order: B with Persistent): Unit
 
-  /** The underlying `Auction` mechanism used to fill `LimitAskOrder` instances. */
-  protected def auction: Auction { type A = X; type B = Y with Persistent }
+  protected def askOrderBook: AB
 
-  /** The underlying `ReverseAuction` mechanism used to fill `LimitBidOrder` instances. */
-  protected def reverseAuction: ReverseAuction { type B = Y; type A = X with Persistent }
+  protected def bidOrderBook: BB
 
 }
 
 
-/** Base trait defining the interface for all `SingleUnitDoubleAuction` instances.
-  *
-  * @note A `SingleUnitDoubleAuction` is a composition of a `SingleUnitAuction` and a `SingleUnitReverseAuction`.
-  */
-trait SingleUnitDoubleAuction extends DoubleAuction {
+/** Base trait defining the interface for all `ContinuousDoubleAuction` types. */
+trait ContinuousDoubleAuction extends DoubleAuction {
 
-  type X <: LimitAskOrder with SingleUnit
-  type Y <: LimitBidOrder with SingleUnit
+  def fill(order: A): Option[Fill[A, B with Persistent]]
 
-  /** The underlying `SingleAuction` mechanism used to fill `LimitAskOrder` instances. */
-  protected def auction: SingleUnitAuction { type A = X; type B = Y with Persistent }
-
-  /** The underlying `SingleUnitReverseAuction` mechanism used to fill `LimitBidOrder` instances. */
-  protected def reverseAuction: SingleUnitReverseAuction { type B = Y; type A = X with Persistent }
+  def fill(order: B): Option[Fill[A with Persistent, B]]
 
 }
 
 
-/** Base trait defining the interface for all `MultiUnitDoubleAuction` instances.
-  *
-  * @note A `MultiUnitDoubleAuction` is a composition of a `MultiUnitAuction` and a `MultiUnitReverseAuction`.
-  */
-trait MultiUnitDoubleAuction extends DoubleAuction {
+/** Base trait defining the interface for all `PeriodicDoubleAuction` types. */
+trait PeriodicDoubleAuction extends DoubleAuction {
+  /* Type members will be made progressively tighter in sub-classes... */
+  type A <: LimitAskOrder with Persistent with Quantity
+  type B <: LimitBidOrder with Persistent with Quantity
 
-  type X <: LimitAskOrder with MultiUnit
-  type Y <: LimitBidOrder with MultiUnit
-
-  /** The underlying `MultiUnitAuction` mechanism used to fill `LimitAskOrder` instances. */
-  protected def auction: MultiUnitAuction { type A = X; type B = Y with Persistent }
-
-  /** The underlying `MultiUnitReverseAuction` mechanism used to fill `LimitBidOrder` instances. */
-  protected def reverseAuction: MultiUnitReverseAuction { type B = Y; type A = X with Persistent }
+  def fill(): Option[Iterable[Fill[A, B]]]
 
 }
