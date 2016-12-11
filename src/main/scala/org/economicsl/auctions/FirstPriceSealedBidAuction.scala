@@ -21,8 +21,7 @@ import org.economicsl.auctions.orderbooks.SortedBidOrderBook
 import org.economicsl.auctions.orders.{LimitAskOrder, LimitBidOrder, Persistent, SingleUnit}
 
 
-class FirstPriceSealedBidAuction(tradable: Tradable)
-  extends SingleUnitAscendingPriceAuction[LimitAskOrder with SingleUnit, LimitBidOrder with Persistent with SingleUnit] {
+class FirstPriceSealedBidAuction(tradable: Tradable) extends SingleUnitAscendingPriceAuction {
 
   type A = LimitAskOrder with SingleUnit
   type B = LimitBidOrder with Persistent with SingleUnit

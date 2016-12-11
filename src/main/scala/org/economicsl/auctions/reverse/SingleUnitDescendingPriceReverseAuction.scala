@@ -22,16 +22,14 @@ import org.economicsl.auctions.orders.{LimitAskOrder, LimitBidOrder, Persistent,
 import org.economicsl.auctions.{Fill, Price, Tradable}
 
 
-/** Trait defining the interface for a single-unit descending price reverse auction.
-  *
-  * @tparam B a sub-type of `LimitBidOrder with SingleUnit`.
-  * @tparam A a sub-type of `LimitAskOrder with Persistent with SingleUnit`
-  */
-trait SingleUnitDescendingPriceReverseAuction[B <: LimitBidOrder with SingleUnit, A <: LimitAskOrder with Persistent with SingleUnit]
-  extends SingleUnitReverseAuction[B, A] with DescendingAskOrders[B, A]
+/** Trait defining the interface for a single-unit descending price reverse auction. */
+trait SingleUnitDescendingPriceReverseAuction extends SingleUnitReverseAuction with DescendingAskOrders
 
 
 object SingleUnitDescendingPriceReverseAuction {
+
+  type X = LimitBidOrder with SingleUnit
+  type Y = LimitAskOrder with Persistent with SingleUnit
 
   /** Create an instance of a `SingleUnitDescendingPriceReverseAuction`.
     *
@@ -39,34 +37,31 @@ object SingleUnitDescendingPriceReverseAuction {
     * @param pricingRule rule used to form the transaction price from the `LimitBidOrder` and the matched `LimitAskOrder`.
     * @param tradable all `LimitAskOrder` instances stored in the `SortedAskOrderBook` should be for the same `Tradable`.
     * @param ordering ordering used to maintain the ordering of the `SortedAskOrderBook`.
-    * @tparam B a sub-type of `LimitBidOrder with SingleUnit`.
-    * @tparam A a sub-type of `LimitAskOrder with Persistent with SingleUnit`
     */
-  def apply[B <: LimitBidOrder with SingleUnit, A <: LimitAskOrder with Persistent with SingleUnit]
-           (matchingRule: (B, SortedAskOrderBook[A]) => Option[(UUID, A)],
-            pricingRule: (B, A) => Price,
+  def apply(matchingRule: (X, SortedAskOrderBook[Y]) => Option[(UUID, Y)],
+            pricingRule: (X, Y) => Price,
             tradable: Tradable)
-           (implicit ordering: Ordering[(UUID, A)])
-           : SingleUnitDescendingPriceReverseAuction[B, A] = {
-    new DefaultImpl[B, A](matchingRule, pricingRule, tradable)(ordering)
+           (implicit ordering: Ordering[(UUID, Y)])
+           : SingleUnitDescendingPriceReverseAuction = {
+    new DefaultImpl(matchingRule, pricingRule, tradable)(ordering)
   }
 
 
   /** Default implementation of a single-unit descending price reverse auction.
     *
     * @param matchingRule rule used to match a `LimitBidOrder` with a `LimitAskOrder` taken from a `SortedAskOrderBook`.
-    * @param pricingRule rule used to form the transaction price from the `LimitBidOrder` and the matched `LimitAskOrder`.
+    * @param pricingRule rule used to form thetransaction price from the `LimitBidOrder` and the matched `LimitAskOrder`.
     * @param tradable all `LimitAskOrder` instances stored in the `SortedAskOrderBook` should be for the same `Tradable`.
     * @param ordering ordering used to maintain the ordering of the `SortedAskOrderBook`.
-    * @tparam B a sub-type of `LimitBidOrder with SingleUnit`.
-    * @tparam A a sub-type of `LimitAskOrder with Persistent with SingleUnit`
     */
-  private[this] class DefaultImpl[B <: LimitBidOrder with SingleUnit, A <: LimitAskOrder with Persistent with SingleUnit]
-                                 (matchingRule: (B, SortedAskOrderBook[A]) => Option[(UUID, A)],
-                                  pricingRule: (B, A) => Price,
+  private[this] class DefaultImpl(matchingRule: (X, SortedAskOrderBook[Y]) => Option[(UUID, Y)],
+                                  pricingRule: (X, Y) => Price,
                                   val tradable: Tradable)
-                                 (implicit ordering: Ordering[(UUID, A)])
-    extends SingleUnitDescendingPriceReverseAuction[B, A] {
+                                 (implicit ordering: Ordering[(UUID, Y)])
+    extends SingleUnitDescendingPriceReverseAuction {
+
+    type B = X
+    type A = Y
 
     def fill(order: B): Option[Fill[A, B]] = findMatchFor(order, orderBook) map {
       case (_, askOrder) =>
@@ -88,4 +83,5 @@ object SingleUnitDescendingPriceReverseAuction {
     @volatile protected var orderBook: OB = SortedAskOrderBook[A](tradable)(ordering)
 
   }
+
 }

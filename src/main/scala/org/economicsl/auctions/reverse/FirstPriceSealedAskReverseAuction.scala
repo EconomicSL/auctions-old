@@ -22,8 +22,7 @@ import org.economicsl.auctions.orders.{LimitAskOrder, LimitBidOrder, Persistent,
 import org.economicsl.auctions.{Fill, Price, Tradable}
 
 
-class FirstPriceSealedAskReverseAuction(tradable: Tradable)
-  extends SingleUnitDescendingPriceReverseAuction[LimitBidOrder with SingleUnit, LimitAskOrder with Persistent with SingleUnit] {
+class FirstPriceSealedAskReverseAuction(tradable: Tradable) extends SingleUnitDescendingPriceReverseAuction {
 
   type B = LimitBidOrder with SingleUnit
   type A = LimitAskOrder with Persistent with SingleUnit

@@ -4,8 +4,8 @@ import org.economicsl.auctions.orderbooks.SortedAskOrderBook
 import org.economicsl.auctions.orders.{LimitAskOrder, LimitBidOrder, Persistent, Quantity}
 
 
-trait DescendingAskOrders[B <: LimitBidOrder with Quantity, A <: LimitAskOrder with Persistent with Quantity] {
-  this: ReverseAuction[B, A] =>
+trait DescendingAskOrders {
+  this: ReverseAuction =>
 
   type OB = SortedAskOrderBook[A]
 
