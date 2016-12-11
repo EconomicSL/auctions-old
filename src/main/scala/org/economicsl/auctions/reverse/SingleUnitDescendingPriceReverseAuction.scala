@@ -61,7 +61,6 @@ object SingleUnitDescendingPriceReverseAuction {
     extends SingleUnitDescendingPriceReverseAuction {
 
     type B = X
-    type A = Y
 
     def fill(order: B): Option[Fill[A, B]] = findMatchFor(order, orderBook) map {
       case (_, askOrder) =>

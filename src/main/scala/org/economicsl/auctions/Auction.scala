@@ -51,7 +51,7 @@ sealed trait Auction {
 trait SingleUnitAuction extends Auction {
 
   type A <: LimitAskOrder with SingleUnit
-  type B <: LimitBidOrder with Persistent with SingleUnit
+  type B = LimitBidOrder with Persistent with SingleUnit
 
 }
 
@@ -60,6 +60,6 @@ trait SingleUnitAuction extends Auction {
 trait MultiUnitAuction extends Auction {
 
   type A <: LimitAskOrder with MultiUnit
-  type B <: LimitBidOrder with Persistent with MultiUnit
+  type B = LimitBidOrder with Persistent with MultiUnit
 
 }
