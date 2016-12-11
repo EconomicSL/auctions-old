@@ -44,7 +44,7 @@ sealed trait ReverseAuction {
 trait SingleUnitReverseAuction extends ReverseAuction {
 
   type B <: LimitBidOrder with SingleUnit
-  type A <: LimitAskOrder with Persistent with SingleUnit
+  type A = LimitAskOrder with Persistent with SingleUnit
 
 }
 
@@ -53,7 +53,7 @@ trait SingleUnitReverseAuction extends ReverseAuction {
 trait MultiUnitReverseAuction extends ReverseAuction {
 
   type B <: LimitBidOrder with MultiUnit
-  type A <: LimitAskOrder with Persistent with MultiUnit
+  type A = LimitAskOrder with Persistent with MultiUnit
 
 }
 

@@ -18,14 +18,13 @@ package org.economicsl.auctions.reverse
 import java.util.UUID
 
 import org.economicsl.auctions.orderbooks.SortedAskOrderBook
-import org.economicsl.auctions.orders.{LimitAskOrder, LimitBidOrder, Persistent, SingleUnit}
+import org.economicsl.auctions.orders.{LimitBidOrder, SingleUnit}
 import org.economicsl.auctions.{Fill, Price, Tradable}
 
 
 class FirstPriceSealedAskReverseAuction(tradable: Tradable) extends SingleUnitDescendingPriceReverseAuction {
 
   type B = LimitBidOrder with SingleUnit
-  type A = LimitAskOrder with Persistent with SingleUnit
 
   def fill(order: B): Option[Fill[A, B]] = {
     findMatchFor(order, orderBook) map {

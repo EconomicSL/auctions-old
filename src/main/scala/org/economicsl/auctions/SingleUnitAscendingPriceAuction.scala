@@ -50,7 +50,7 @@ object SingleUnitAscendingPriceAuction {
     *
     * @param matchingRule rule used to match a `LimitAskOrder` with a `LimitBidOrder` taken from a `SortedBidOrderBook`.
     * @param pricingRule rule used to form the transaction price from the `LimitAskOrder` and the matched `LimitBidOrder`.
-    * @param tradable all `LimitBidOrder` instances stored in the `SortedOrderBook` should be for the same `Tradable`.
+    * @param tradable all `LimitBidOrder` instances stored in the `SortedBidOrderBook` should be for the same `Tradable`.
     * @param ordering ordering used to maintain the ordering of the `SortedBidOrderBook`.
     */
   private[this] class DefaultImpl(matchingRule: (X, SortedBidOrderBook[Y]) => Option[(UUID, Y)],
@@ -60,7 +60,6 @@ object SingleUnitAscendingPriceAuction {
     extends SingleUnitAscendingPriceAuction {
 
     type A = X
-    type B = Y
 
     def fill(order: A): Option[Fill[A, B]] = findMatchFor(order, orderBook) map {
       case (_, bidOrder) =>

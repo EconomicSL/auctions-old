@@ -18,13 +18,12 @@ package org.economicsl.auctions
 import java.util.UUID
 
 import org.economicsl.auctions.orderbooks.SortedBidOrderBook
-import org.economicsl.auctions.orders.{LimitAskOrder, LimitBidOrder, Persistent, SingleUnit}
+import org.economicsl.auctions.orders.{LimitAskOrder, SingleUnit}
 
 
 class FirstPriceSealedBidAuction(tradable: Tradable) extends SingleUnitAscendingPriceAuction {
 
   type A = LimitAskOrder with SingleUnit
-  type B = LimitBidOrder with Persistent with SingleUnit
 
   def fill(order: A): Option[Fill[A, B]] = {
     findMatchFor(order, orderBook) map {
