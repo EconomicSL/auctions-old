@@ -25,6 +25,8 @@ sealed trait Order {
 
   def issuer: UUID
 
+  def isPersistent: Boolean
+
   def tradable: Tradable
 
 }
