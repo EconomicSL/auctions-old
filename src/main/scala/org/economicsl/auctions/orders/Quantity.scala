@@ -18,7 +18,6 @@ package org.economicsl.auctions.orders
 
 /** Mixin trait for an `Order` for a particular quantity of a `Tradable`.*/
 sealed trait Quantity {
-  this: Order =>
 
   def quantity: Long
 
@@ -27,7 +26,6 @@ sealed trait Quantity {
 
 /** Mixin trait for an `Order` for a single unit of a `Tradable`. */
 trait SingleUnit extends Quantity {
-  this: Order =>
 
   val quantity = 1
 
@@ -36,6 +34,8 @@ trait SingleUnit extends Quantity {
 
 /** Mixin trait for an `Order` for multiple units of a `Tradable`. */
 trait MultiUnit extends Quantity {
-  this: Order =>
+  type O <: Order
+
+  def split(unmatchedQuantity: Long): (O, O)
 
 }

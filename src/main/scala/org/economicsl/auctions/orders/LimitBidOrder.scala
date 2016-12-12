@@ -18,9 +18,14 @@ package org.economicsl.auctions.orders
 import java.util.UUID
 
 
-trait LimitBidOrder extends BidOrder with LimitPrice {
+sealed trait LimitBidOrder extends BidOrder with LimitPrice {
   this: Quantity =>
 
+}
+
+
+trait MultiUnitLimitBidOrder extends LimitBidOrder with MultiUnit {
+  type O <: MultiUnitLimitBidOrder
 }
 
 

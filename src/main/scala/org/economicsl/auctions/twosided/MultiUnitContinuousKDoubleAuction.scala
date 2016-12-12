@@ -19,31 +19,39 @@ import org.economicsl.auctions.{Fill, Price, Tradable}
 import org.economicsl.auctions.orderbooks.{SortedAskOrderBook, SortedBidOrderBook}
 import org.economicsl.auctions.orders.Persistent
 
+import scala.collection.immutable
 
-class SingleUnitContinuousKDoubleAuction(k: Double, tradable: Tradable) extends SingleUnitContinuousDoubleAuction {
+
+class MultiUnitContinuousKDoubleAuction(k: Double, tradable: Tradable) extends MultiUnitContinuousDoubleAuction {
 
   type AB = SortedAskOrderBook[A with Persistent]
   type BB = SortedBidOrderBook[B with Persistent]
 
-  def fill(order: A): Option[Fill[A, B]] = findMatchFor(order) match {
-    case Some((askOrder, bidOrder, orderBook)) =>
-      bidOrderBook = orderBook  // SIDE EFFECT!
-      val price = Price(k * bidOrder.limit.value + (1 - k) * askOrder.limit.value)
-      Some(Fill(askOrder, bidOrder, price))
-    case None => order match {
-      case unmatchedOrder: Persistent => place(unmatchedOrder); None
-      case _ => None
+  def fill(order: A): Option[immutable.Queue[Fill[A, B with Persistent]]] = {
+    val (matchedOrders, residualOrder, orderBook) = findMatchFor(order)
+    residualOrder.foreach { case askOrder: Persistent => place(askOrder) }  // POSSIBLE SIDE EFFECT!
+    if (matchedOrders.nonEmpty) {
+      bidOrderBook = orderBook // SIDE EFFECT!
+      Some(matchedOrders.map { case (askOrder, bidOrder) => Fill(askOrder, bidOrder, getPrice(askOrder, bidOrder)) })
+    } else {
+      order match {
+        case unmatchedOrder: Persistent => place(unmatchedOrder); None
+        case _ => None
+      }
     }
   }
 
-  def fill(order: B): Option[Fill[A, B]] = findMatchFor(order) match {
-    case Some((askOrder, bidOrder, orderBook)) =>
-      askOrderBook = orderBook  // SIDE EFFECT!
-      val price = Price(k * bidOrder.limit.value + (1 - k) * askOrder.limit.value)
-      Some(Fill(askOrder, bidOrder, price))
-    case None => order match {
-      case unmatchedOrder: Persistent => place(unmatchedOrder); None
-      case _ => None
+  def fill(order: B): Option[immutable.Queue[Fill[A with Persistent, B]]] = {
+    val (matchedOrders, residualOrder, orderBook) = findMatchFor(order)
+    residualOrder.foreach { case bidOrder: Persistent => place(bidOrder) }  // POSSIBLE SIDE EFFECT!
+    if (matchedOrders.nonEmpty) {
+      askOrderBook = orderBook // SIDE EFFECT!
+      Some(matchedOrders.map { case (askOrder, bidOrder) => Fill(askOrder, bidOrder, getPrice(askOrder, bidOrder)) })
+    } else {
+      order match {
+        case unmatchedOrder: Persistent => place(unmatchedOrder); None
+        case _ => None
+      }
     }
   }
 
@@ -65,18 +73,12 @@ class SingleUnitContinuousKDoubleAuction(k: Double, tradable: Tradable) extends 
     bidOrderBook = bidOrderBook + order
   }
 
-  protected def findMatchFor(order: A): Option[(A, B, BB)] = bidOrderBook.headOption match {
-    case Some((_, bidOrder)) if order.limit <= bidOrder.limit => Some(order, bidOrder, bidOrderBook - bidOrder)
-    case _ => None
-  }
-
-  protected def findMatchFor(order: B): Option[(A, B, AB)] = askOrderBook.headOption match {
-    case Some((_, askOrder)) if order.limit >= askOrder.limit => Some(askOrder, order, askOrderBook - askOrder)
-    case _ => None
-  }
-
   @volatile protected var askOrderBook: AB = SortedAskOrderBook(tradable)
 
   @volatile protected var bidOrderBook: BB = SortedBidOrderBook(tradable)
+
+  private[this] def getPrice(askOrder: A, bidOrder: B): Price = {
+    Price(k * bidOrder.limit.value + (1 - k) * askOrder.limit.value)
+  }
 
 }

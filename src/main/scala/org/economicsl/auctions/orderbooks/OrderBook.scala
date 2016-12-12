@@ -21,4 +21,10 @@ import org.economicsl.auctions.orders.{Order, Persistent}
 
 
 /** Base trait defining the interface for all `OrderBook` instances. */
-trait OrderBook[+O <: Order with Persistent, +CC <: collection.GenIterable[(UUID, O)]]
+trait OrderBook[+O <: Order with Persistent, +CC <: collection.GenIterable[(UUID, O)]] {
+
+  def headOption: Option[(UUID, O)]
+
+  def existingOrders: CC
+
+}

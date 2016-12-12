@@ -15,13 +15,68 @@ limitations under the License.
 */
 package org.economicsl.auctions.twosided
 
-import org.economicsl.auctions.orders.{LimitAskOrder, LimitBidOrder, MultiUnit}
+import org.economicsl.auctions.orders.{MultiUnitLimitAskOrder, MultiUnitLimitBidOrder, Persistent}
+
+import scala.annotation.tailrec
+import scala.collection.immutable
 
 
 /** Base trait defining the interface for all multi-unit `ContinuousDoubleAuction` types. */
 trait MultiUnitContinuousDoubleAuction extends ContinuousDoubleAuction {
 
-  type A = LimitAskOrder with MultiUnit
-  type B = LimitBidOrder with MultiUnit
+  type A = MultiUnitLimitAskOrder
+  type B = MultiUnitLimitBidOrder
+
+  protected def findMatchFor(order: A): (immutable.Queue[(A, B with Persistent)], Option[A], BB) = {
+
+    type MatchedOrders = immutable.Queue[(A, B with Persistent)]
+
+    @tailrec def accumulate(matches: MatchedOrders, order: A, orderBook: BB): (MatchedOrders, Option[A], BB) = {
+      orderBook.headOption match {
+        case None =>
+          (matches, Some(order), orderBook)
+        case Some((_, bidOrder)) if bidOrder.limit < order.limit =>
+          (matches, Some(order), orderBook)
+        case Some((_, bidOrder)) if bidOrder.limit >= order.limit && bidOrder.quantity == order.quantity =>
+          (matches.enqueue((order, bidOrder)), None, orderBook)
+        case Some((_, bidOrder)) if bidOrder.limit >= order.limit && bidOrder.quantity > order.quantity =>
+          val unmatchedQuantity = bidOrder.quantity - order.quantity
+          val (matchedBidOrder, unmatchedBidOrder) = bidOrder.split(unmatchedQuantity)
+          (matches.enqueue((order, matchedBidOrder)), None, orderBook + unmatchedBidOrder)
+        case Some((_, bidOrder)) if bidOrder.limit >= order.limit && bidOrder.quantity < order.quantity =>
+          val unmatchedQuantity = order.quantity - bidOrder.quantity
+          val (matchedAskOrder, unmatchedAskOrder) = order.split(unmatchedQuantity)
+          accumulate(matches.enqueue((matchedAskOrder, bidOrder)), unmatchedAskOrder, orderBook - bidOrder)
+      }
+    }
+
+    accumulate(immutable.Queue.empty[(A, B with Persistent)], order, bidOrderBook)
+  }
+
+  protected def findMatchFor(order: B): (immutable.Queue[(A with Persistent, B)], Option[B], AB) = {
+
+    type MatchedOrders = immutable.Queue[(A with Persistent, B)]
+
+    @tailrec def accumulate(matches: MatchedOrders, order: B, orderBook: AB): (MatchedOrders, Option[B], AB) = {
+      orderBook.headOption match {
+        case None =>
+          (matches, Some(order), orderBook)
+        case Some((_, askOrder)) if askOrder.limit > order.limit =>
+          (matches, Some(order), orderBook)
+        case Some((_, askOrder)) if askOrder.limit <= order.limit && askOrder.quantity == order.quantity =>
+          (matches.enqueue((askOrder, order)), None, orderBook)
+        case Some((_, askOrder)) if askOrder.limit <= order.limit && askOrder.quantity > order.quantity =>
+          val unmatchedQuantity = askOrder.quantity - order.quantity
+          val (matchedAskOrder, unmatchedAskOrder) = askOrder.split(unmatchedQuantity)
+          (matches.enqueue((matchedAskOrder, order)), None, orderBook + unmatchedAskOrder)
+        case Some((_, askOrder)) if askOrder.limit <= order.limit && askOrder.quantity < order.quantity =>
+          val unmatchedQuantity = order.quantity - askOrder.quantity
+          val (matchedBidOrder, unmatchedBidOrder) = order.split(unmatchedQuantity)
+          accumulate(matches.enqueue((askOrder, matchedBidOrder)), unmatchedBidOrder, orderBook - askOrder)
+      }
+    }
+
+    accumulate(immutable.Queue.empty[(A with Persistent, B)], order, askOrderBook)
+  }
 
 }
