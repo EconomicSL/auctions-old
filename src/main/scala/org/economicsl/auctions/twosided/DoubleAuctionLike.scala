@@ -17,9 +17,11 @@ package org.economicsl.auctions.twosided
 
 import java.util.UUID
 
-import org.economicsl.auctions.orderbooks.OrderBook
+import org.economicsl.auctions.orderbooks.{OrderBook, SortedAskOrderBook, SortedBidOrderBook}
 import org.economicsl.auctions.orders._
-import org.economicsl.auctions.Fill
+import org.economicsl.auctions.{Fill, Tradable}
+
+import scala.collection.immutable
 
 
 /** Base trait defining the interface for all `DoubleAuction` instances. */
@@ -71,6 +73,9 @@ trait PeriodicDoubleAuction extends DoubleAuctionLike {
   type AB <: OrderBook[A, collection.GenIterable[(UUID, A)]]
   type B <: LimitBidOrder with Persistent with Quantity
   type BB <: OrderBook[B, collection.GenIterable[(UUID, B)]]
+
+  type MatchedOrders = immutable.Iterable[(A, B)]
+  type ResidualOrderBooks = (AB, BB)
 
   def fill(): Option[Iterable[Fill[A, B]]]
 

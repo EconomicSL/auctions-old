@@ -18,7 +18,7 @@ package org.economicsl.auctions.orderbooks
 import java.util.UUID
 
 import org.economicsl.auctions.Tradable
-import org.economicsl.auctions.orders.{AskOrder, Persistent}
+import org.economicsl.auctions.orders.{AskOrder, BidOrder, Persistent}
 
 import scala.collection.immutable
 
@@ -38,6 +38,9 @@ class SortedAskOrderBook[A <: AskOrder with Persistent] private (initialOrders: 
 
   def headOption: Option[(UUID, A)] = existingOrders.headOption
 
+  def zip[B <: BidOrder with Persistent](orderBook: SortedBidOrderBook[B]):  = {
+
+  }
 
   protected val existingOrders: immutable.TreeSet[(UUID, A)] = initialOrders
 
