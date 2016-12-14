@@ -13,20 +13,21 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package org.economicsl.auctions.reverse
+package org.economicsl.auctions.reverse.singleunit
 
 import java.util.UUID
 
 import org.economicsl.auctions.orderbooks.SortedAskOrderBook
 import org.economicsl.auctions.orders.{LimitAskOrder, LimitBidOrder, Persistent, SingleUnit}
+import org.economicsl.auctions.reverse.{DescendingAskOrders, SingleUnitReverseAuction}
 import org.economicsl.auctions.{Fill, Price, Tradable}
 
 
 /** Trait defining the interface for a single-unit descending price reverse auction. */
-trait SingleUnitDescendingPriceReverseAuction extends SingleUnitReverseAuction with DescendingAskOrders
+trait DescendingPriceReverseAuction extends SingleUnitReverseAuction with DescendingAskOrders
 
 
-object SingleUnitDescendingPriceReverseAuction {
+object DescendingPriceReverseAuction {
 
   type X = LimitBidOrder with SingleUnit
   type Y = LimitAskOrder with Persistent with SingleUnit
@@ -42,7 +43,7 @@ object SingleUnitDescendingPriceReverseAuction {
             pricingRule: (X, Y) => Price,
             tradable: Tradable)
            (implicit ordering: Ordering[(UUID, Y)])
-           : SingleUnitDescendingPriceReverseAuction = {
+           : DescendingPriceReverseAuction = {
     new DefaultImpl(matchingRule, pricingRule, tradable)(ordering)
   }
 
@@ -58,13 +59,13 @@ object SingleUnitDescendingPriceReverseAuction {
                                   pricingRule: (X, Y) => Price,
                                   val tradable: Tradable)
                                  (implicit ordering: Ordering[(UUID, Y)])
-    extends SingleUnitDescendingPriceReverseAuction {
+    extends DescendingPriceReverseAuction {
 
     type B = X
 
     def fill(order: B): Option[Fill[A, B]] = findMatchFor(order, orderBook) map {
       case (_, askOrder) =>
-        orderBook = orderBook - (askOrder.issuer, askOrder) // SIDE EFFECT!
+        orderBook = orderBook - askOrder // SIDE EFFECT!
       val price = formPriceUsing(order, askOrder)
         Fill(askOrder, order, price)
     }
@@ -73,7 +74,7 @@ object SingleUnitDescendingPriceReverseAuction {
       *
       * @param order a `LimitAskOrder with Persistent with SingleUnit` instance to add to the `SortedAskOrderBook`
       */
-    def place(order: A): Unit = orderBook + (order.issuer, order)
+    def place(order: A): Unit = orderBook + order
 
     protected def findMatchFor(order: B, orderBook: OB): Option[(UUID, A)] = matchingRule(order, orderBook)
 

@@ -13,19 +13,20 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package org.economicsl.auctions
+package org.economicsl.auctions.singleunit
 
 import java.util.UUID
 
+import org.economicsl.auctions._
 import org.economicsl.auctions.orderbooks.SortedBidOrderBook
 import org.economicsl.auctions.orders.{LimitAskOrder, LimitBidOrder, Persistent, SingleUnit}
 
 
 /** Trait defining a single-unit ascending price auction. */
-trait SingleUnitAscendingPriceAuction extends SingleUnitAuction with AscendingBidOrders
+trait AscendingPriceAuction extends SingleUnitAuction with AscendingBidOrders
 
 
-object SingleUnitAscendingPriceAuction {
+object AscendingPriceAuction {
 
   type X = LimitAskOrder with SingleUnit
   type Y = LimitBidOrder with Persistent with SingleUnit
@@ -41,7 +42,7 @@ object SingleUnitAscendingPriceAuction {
             pricingRule: (X, Y) => Price,
             tradable: Tradable)
            (implicit ordering: Ordering[(UUID, Y)])
-           : SingleUnitAscendingPriceAuction = {
+           : AscendingPriceAuction = {
     new DefaultImpl(matchingRule, pricingRule, tradable)(ordering)
   }
 
@@ -57,13 +58,13 @@ object SingleUnitAscendingPriceAuction {
                                   pricingRule: (X, Y) => Price,
                                   val tradable: Tradable)
                                  (implicit ordering: Ordering[(UUID, Y)])
-    extends SingleUnitAscendingPriceAuction {
+    extends AscendingPriceAuction {
 
     type A = X
 
     def fill(order: A): Option[Fill[A, B]] = findMatchFor(order, orderBook) map {
       case (_, bidOrder) =>
-        orderBook = orderBook - (bidOrder.issuer, bidOrder) // SIDE EFFECT!
+        orderBook = orderBook - bidOrder // SIDE EFFECT!
         val price = formPriceUsing(order, bidOrder)
         Fill(order, bidOrder, price)
     }
@@ -72,7 +73,7 @@ object SingleUnitAscendingPriceAuction {
       *
       * @param order a `LimitBidOrder with Persistent with Quantity` instance to add to the `OrderBook`
       */
-    def place(order: B): Unit = orderBook + (order.issuer, order)
+    def place(order: B): Unit = orderBook + order
 
     protected def findMatchFor(order: A, orderBook: OB): Option[(UUID, B)] = matchingRule(order, orderBook)
 

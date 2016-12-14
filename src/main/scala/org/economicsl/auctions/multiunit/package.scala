@@ -13,15 +13,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package org.economicsl.auctions.twosided
-
-import org.economicsl.auctions.orders.{LimitAskOrder, LimitBidOrder, MultiUnit}
+package org.economicsl.auctions
 
 
-/** Base trait defining the interface for all multi-unit `ContinuousDoubleAuction` types. */
-trait MultiUnitContinuousDoubleAuction extends ContinuousDoubleAuction {
-
-  type A = LimitAskOrder with MultiUnit
-  type B = LimitBidOrder with MultiUnit
-
-}
+/** Package defines the API for multi-unit auctions. */
+package object multiunit
