@@ -15,6 +15,5 @@ limitations under the License.
 */
 package org.economicsl.auctions
 
-
-/** Package defines the API for multi-unit auctions. */
-package object multiunit
+/** Package defines the API for single-unit auctions. */
+package object singleunit
