@@ -13,22 +13,23 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package org.economicsl.auctions
+package org.economicsl.auctions.singleunit
 
 import java.util.UUID
 
 import org.economicsl.auctions.orderbooks.SortedBidOrderBook
 import org.economicsl.auctions.orders.{LimitAskOrder, SingleUnit}
+import org.economicsl.auctions.{Fill, Price, Tradable}
 
 
-class FirstPriceSealedBidAuction(tradable: Tradable) extends SingleUnitAscendingPriceAuction {
+class FirstPriceSealedBidAuction(tradable: Tradable) extends AscendingPriceAuction {
 
   type A = LimitAskOrder with SingleUnit
 
   def fill(order: A): Option[Fill[A, B]] = {
     findMatchFor(order, orderBook) map {
       case (_, bidOrder) =>
-        orderBook = orderBook - (bidOrder.issuer, bidOrder) // SIDE EFFECT!
+        orderBook = orderBook - bidOrder // SIDE EFFECT!
         val price = formPriceUsing(order, bidOrder)
         Fill(order, bidOrder, price)
     }
@@ -38,7 +39,7 @@ class FirstPriceSealedBidAuction(tradable: Tradable) extends SingleUnitAscending
     *
     * @param order a `LimitBidOrder with Persistent with Quantity` instance to add to the `SortedBidOrderBook`
     */
-  def place(order: B): Unit = orderBook - (order.issuer, order)
+  def place(order: B): Unit = orderBook + order
 
   protected def findMatchFor(order: A, orderBook: OB): Option[(UUID, B)] = {
     orderBook.headOption filter { case (_, bidOrder) => bidOrder.limit >= order.limit }

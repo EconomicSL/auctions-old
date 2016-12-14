@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package org.economicsl.auctions.reverse
+package org.economicsl.auctions.reverse.singleunit
 
 import java.util.UUID
 
@@ -22,14 +22,14 @@ import org.economicsl.auctions.orders.{LimitBidOrder, SingleUnit}
 import org.economicsl.auctions.{Fill, Price, Tradable}
 
 
-class FirstPriceSealedAskReverseAuction(tradable: Tradable) extends SingleUnitDescendingPriceReverseAuction {
+class FirstPriceSealedAskReverseAuction(tradable: Tradable) extends DescendingPriceReverseAuction {
 
   type B = LimitBidOrder with SingleUnit
 
   def fill(order: B): Option[Fill[A, B]] = {
     findMatchFor(order, orderBook) map {
       case (_, askOrder) =>
-        orderBook = orderBook - (askOrder.issuer, askOrder) // SIDE EFFECT!
+        orderBook = orderBook - askOrder // SIDE EFFECT!
       val price = formPriceUsing(order, askOrder)
         Fill(askOrder, order, price)
     }
@@ -39,7 +39,7 @@ class FirstPriceSealedAskReverseAuction(tradable: Tradable) extends SingleUnitDe
     *
     * @param order a `LimitBidOrder with Persistent with Quantity` instance to add to the `SortedBidOrderBook`
     */
-  def place(order: A): Unit = orderBook - (order.issuer, order)
+  def place(order: A): Unit = orderBook - order
 
   protected def findMatchFor(order: B, orderBook: OB): Option[(UUID, A)] = {
     orderBook.headOption filter { case (_, askOrder) => askOrder.limit >= order.limit }

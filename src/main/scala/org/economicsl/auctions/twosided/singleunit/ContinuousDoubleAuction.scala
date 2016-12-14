@@ -13,13 +13,14 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package org.economicsl.auctions.twosided
+package org.economicsl.auctions.twosided.singleunit
 
 import org.economicsl.auctions.orders.{LimitAskOrder, LimitBidOrder, SingleUnit}
+import org.economicsl.auctions.twosided
 
 
 /** Base trait defining the interface for all single-unit `ContinuousDoubleAuction` types. */
-trait SingleUnitContinuousDoubleAuction extends ContinuousDoubleAuction {
+trait ContinuousDoubleAuction extends twosided.ContinuousDoubleAuction {
 
   type A = LimitAskOrder with SingleUnit
   type B = LimitBidOrder with SingleUnit
