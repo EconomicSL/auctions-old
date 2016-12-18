@@ -28,11 +28,11 @@ class SortedAskOrderBook[A <: AskOrder with Persistent] private (initialOrders: 
                                                                 (implicit ordering: Ordering[(UUID, A)])
   extends OrderBook[A, immutable.TreeSet[(UUID, A)]] {
 
-  def + (order: A): SortedAskOrderBook[A] = {
-    new SortedAskOrderBook(existingOrders + ((order.issuer, order)), tradable)(ordering)
+  def + (uuid: UUID, order: A): SortedAskOrderBook[A] = {
+    new SortedAskOrderBook(existingOrders + ((uuid, order)), tradable)(ordering)
   }
 
-  def - (order: A): SortedAskOrderBook[A] = {
+  def - (uuid: UUID, order: A): SortedAskOrderBook[A] = {
     new SortedAskOrderBook(existingOrders - ((order.issuer, order)), tradable)(ordering)
   }
 

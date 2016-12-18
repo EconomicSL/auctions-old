@@ -17,7 +17,7 @@ package org.economicsl.auctions.reverse
 
 import java.util.UUID
 
-import org.economicsl.auctions.Fill
+import org.economicsl.auctions.{Fill, Price}
 import org.economicsl.auctions.orderbooks.OrderBook
 import org.economicsl.auctions.orders._
 
@@ -35,7 +35,9 @@ sealed trait ReverseAuction {
     *
     * @param order a `LimitAskOrder with Persistent with Quantity` instance to add to the `OrderBook`
     */
-  def place(order: A): Unit
+  def place(order: A): UUID
+
+  protected def randomUUID(): UUID = UUID.randomUUID()
 
 }
 
