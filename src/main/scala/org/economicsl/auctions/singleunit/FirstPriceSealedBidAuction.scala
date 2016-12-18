@@ -13,16 +13,17 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package org.economicsl.auctions
+package org.economicsl.auctions.singleunit
 
 import java.util.UUID
 
 import org.economicsl.auctions.orderbooks.SortedBidOrderBook
 import org.economicsl.auctions.orders.{LimitAskOrder, LimitBidOrder, Persistent, SingleUnit}
+import org.economicsl.auctions.{Fill, Price, Tradable}
 
 
 class FirstPriceSealedBidAuction(tradable: Tradable)
-  extends SingleUnitAscendingPriceAuction[LimitAskOrder with SingleUnit, LimitBidOrder with Persistent with SingleUnit] {
+  extends AscendingPriceAuction[LimitAskOrder with SingleUnit, LimitBidOrder with Persistent with SingleUnit] {
 
   type A = LimitAskOrder with SingleUnit
   type B = LimitBidOrder with Persistent with SingleUnit
