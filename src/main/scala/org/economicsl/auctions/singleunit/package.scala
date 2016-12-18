@@ -15,16 +15,5 @@ limitations under the License.
 */
 package org.economicsl.auctions
 
-import org.economicsl.auctions.orderbooks.SortedBidOrderBook
-
-
-trait AscendingBidOrders {
-  this: Auction =>
-
-  type OB = SortedBidOrderBook[B]
-
-  protected def orderBook: OB
-
-}
-
-
+/** Package defines the API for single-unit auctions. */
+package object singleunit

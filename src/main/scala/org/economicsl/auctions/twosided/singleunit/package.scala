@@ -13,18 +13,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package org.economicsl.auctions
-
-import org.economicsl.auctions.orderbooks.SortedBidOrderBook
+package org.economicsl.auctions.twosided
 
 
-trait AscendingBidOrders {
-  this: Auction =>
-
-  type OB = SortedBidOrderBook[B]
-
-  protected def orderBook: OB
-
-}
-
-
+/** Package defines the API for single-unit, double auctions. */
+package object singleunit

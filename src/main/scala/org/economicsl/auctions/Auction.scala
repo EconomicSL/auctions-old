@@ -22,33 +22,43 @@ import org.economicsl.auctions.orders._
 
 
 /** Base trait defining the interface for all `Auction` instances. */
-sealed trait Auction[A <: LimitAskOrder with Quantity, B <: LimitBidOrder with Persistent with Quantity] {
+sealed trait Auction {
 
+  /* Type members will be made progressively tighter in sub-classes... */
+  type A <: LimitAskOrder with Quantity
+  type B <: LimitBidOrder with Persistent with Quantity
   type OB <: OrderBook[B, collection.GenIterable[(UUID, B)]]
-
-  def fill(order: A): Option[Fill[A, B]]
 
   /** Place a `LimitBidOrder with Persistent with Quantity` into the `OrderBook`.
     *
-    * @param order a `LimitBidOrder with Persistent with Quantity` instance to add to the `OrderBook`
+    * @param order a `LimitBidOrder with Persistent with Quantity` instance to add to the `OrderBook`.
+    * @return a `UUID` that identifies the `order`.
     */
-  def place(order: B): Unit
-
-  protected def findMatchFor(order: A, orderBook: OB): Option[(UUID, B)]
-
-  protected def formPriceUsing(order: A, matchingOrder: B): Price
+  def place(order: B): UUID
 
   /** Underlying `OrderBook` used to store the `LimitBidOrder with Persistent` instances. */
   protected def orderBook: OB
+
+  protected def randomUUID(): UUID = UUID.randomUUID()
 
 }
 
 
 /** Base trait defining the interface for all `SingleUnitAuction` instances. */
-trait SingleUnitAuction[A <: LimitAskOrder with SingleUnit, B <: LimitBidOrder with Persistent with SingleUnit]
-  extends Auction[A, B]
+trait SingleUnitAuction extends Auction {
+
+  type A <: LimitAskOrder with SingleUnit
+  type B = LimitBidOrder with Persistent with SingleUnit
+
+  def fill(order: A): Option[Fill[A, B]]
+
+}
 
 
 /** Base trait defining the interface for all `MultiUnitAuction` instances. */
-trait MultiUnitAuction[A <: LimitAskOrder with MultiUnit, B <: LimitBidOrder with Persistent with MultiUnit]
-  extends Auction[A, B]
+trait MultiUnitAuction extends Auction {
+
+  type A <: LimitAskOrder with MultiUnit
+  type B = LimitBidOrder with Persistent with MultiUnit
+
+}
