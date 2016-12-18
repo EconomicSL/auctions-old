@@ -19,7 +19,7 @@ import java.util.UUID
 
 import org.economicsl.auctions.orderbooks.OrderBook
 import org.economicsl.auctions.orders._
-import org.economicsl.auctions.Fill
+import org.economicsl.auctions.{Fill, Tradable}
 
 
 /** Base trait defining the interface for all `DoubleAuction` instances. */
@@ -52,9 +52,11 @@ trait ContinuousDoubleAuction extends DoubleAuctionLike {
   type AB <: OrderBook[A with Persistent, collection.GenIterable[(UUID, A with Persistent)]]
   type BB <: OrderBook[B with Persistent, collection.GenIterable[(UUID, B with Persistent)]]
 
-  def fill(order: A): Option[Fill[A, B with Persistent]]
+  def fill(order: A): Option[Fill]
 
-  def fill(order: B): Option[Fill[A with Persistent, B]]
+  def fill(order: B): Option[Fill]
+
+  def tradable: Tradable
 
   protected def askOrderBook: AB
 
@@ -72,7 +74,7 @@ trait PeriodicDoubleAuction extends DoubleAuctionLike {
   type B <: LimitBidOrder with Persistent with Quantity
   type BB <: OrderBook[B, collection.GenIterable[(UUID, B)]]
 
-  def fill(): Option[Iterable[Fill[A, B]]]
+  def fill(): Option[Iterable[Fill]]
 
   protected def askOrderBook: AB
 

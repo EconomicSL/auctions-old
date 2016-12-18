@@ -20,12 +20,12 @@ import org.economicsl.auctions.orders.Persistent
 import org.economicsl.auctions.{Fill, Price, Tradable}
 
 
-class ContinuousKDoubleAuction(k: Double, tradable: Tradable) extends ContinuousDoubleAuction {
+class ContinuousKDoubleAuction(k: Double, val tradable: Tradable) extends ContinuousDoubleAuction {
 
   type AB = SortedAskOrderBook[A with Persistent]
   type BB = SortedBidOrderBook[B with Persistent]
 
-  def fill(order: A): Option[Fill[A, B with Persistent]] = findMatchFor(order) match {
+  def fill(order: A): Option[Fill] = findMatchFor(order) match {
     case Some((askOrder, bidOrder, orderBook)) =>
       bidOrderBook = orderBook  // SIDE EFFECT!
       val price = Price(k * bidOrder.limit.value + (1 - k) * askOrder.limit.value)
@@ -36,7 +36,7 @@ class ContinuousKDoubleAuction(k: Double, tradable: Tradable) extends Continuous
     }
   }
 
-  def fill(order: B): Option[Fill[A with Persistent, B]] = findMatchFor(order) match {
+  def fill(order: B): Option[Fill] = findMatchFor(order) match {
     case Some((askOrder, bidOrder, orderBook)) =>
       askOrderBook = orderBook  // SIDE EFFECT!
       val price = Price(k * bidOrder.limit.value + (1 - k) * askOrder.limit.value)

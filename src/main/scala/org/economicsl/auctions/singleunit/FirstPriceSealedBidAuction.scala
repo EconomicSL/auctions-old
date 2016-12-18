@@ -26,7 +26,7 @@ class FirstPriceSealedBidAuction(tradable: Tradable) extends AscendingPriceAucti
 
   type A = LimitAskOrder with SingleUnit
 
-  def fill(order: A): Option[Fill[A, B]] = {
+  def fill(order: A): Option[Fill] = {
     findMatchFor(order, orderBook) map {
       case (_, bidOrder) =>
         orderBook = orderBook - bidOrder // SIDE EFFECT!

@@ -63,7 +63,7 @@ object DescendingPriceReverseAuction {
 
     type B = X
 
-    def fill(order: B): Option[Fill[A, B]] = findMatchFor(order, orderBook) map {
+    def fill(order: B): Option[Fill] = findMatchFor(order, orderBook) map {
       case (_, askOrder) =>
         orderBook = orderBook - askOrder // SIDE EFFECT!
       val price = formPriceUsing(order, askOrder)
