@@ -68,7 +68,7 @@ object SingleUnitDescendingPriceReverseAuction {
                                  (implicit ordering: Ordering[(UUID, A)])
     extends SingleUnitDescendingPriceReverseAuction[B, A] {
 
-    def fill(order: B): Option[Fill[A, B]] = findMatchFor(order, orderBook) map {
+    def fill(order: B): Option[Fill] = findMatchFor(order, orderBook) map {
       case (_, askOrder) =>
         orderBook = orderBook - (askOrder.issuer, askOrder) // SIDE EFFECT!
       val price = formPriceUsing(order, askOrder)

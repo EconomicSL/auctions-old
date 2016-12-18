@@ -28,7 +28,7 @@ class FirstPriceSealedAskReverseAuction(tradable: Tradable)
   type B = LimitBidOrder with SingleUnit
   type A = LimitAskOrder with Persistent with SingleUnit
 
-  def fill(order: B): Option[Fill[A, B]] = {
+  def fill(order: B): Option[Fill] = {
     findMatchFor(order, orderBook) map {
       case (_, askOrder) =>
         orderBook = orderBook - (askOrder.issuer, askOrder) // SIDE EFFECT!

@@ -26,7 +26,7 @@ sealed trait Auction[A <: LimitAskOrder with Quantity, B <: LimitBidOrder with P
 
   type OB <: OrderBook[B, collection.GenIterable[(UUID, B)]]
 
-  def fill(order: A): Option[Fill[A, B]]
+  def fill(order: A): Option[Fill]
 
   /** Place a `LimitBidOrder with Persistent with Quantity` into the `OrderBook`.
     *

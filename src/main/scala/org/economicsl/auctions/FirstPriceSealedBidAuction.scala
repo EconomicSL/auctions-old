@@ -27,7 +27,7 @@ class FirstPriceSealedBidAuction(tradable: Tradable)
   type A = LimitAskOrder with SingleUnit
   type B = LimitBidOrder with Persistent with SingleUnit
 
-  def fill(order: A): Option[Fill[A, B]] = {
+  def fill(order: A): Option[Fill] = {
     findMatchFor(order, orderBook) map {
       case (_, bidOrder) =>
         orderBook = orderBook - (bidOrder.issuer, bidOrder) // SIDE EFFECT!

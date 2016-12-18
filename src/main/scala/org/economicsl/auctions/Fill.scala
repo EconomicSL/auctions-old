@@ -18,7 +18,7 @@ package org.economicsl.auctions
 import org.economicsl.auctions.orders.{LimitAskOrder, LimitBidOrder, Quantity}
 
 
-case class Fill[A <: LimitAskOrder with Quantity, B <: LimitBidOrder with Quantity](askOrder: A, bidOrder: B, price: Price) {
+case class Fill(askOrder: LimitAskOrder with Quantity, bidOrder: LimitBidOrder with Quantity, price: Price) {
 
   val quantity: Long = math.min(askOrder.quantity, bidOrder.quantity)
 
