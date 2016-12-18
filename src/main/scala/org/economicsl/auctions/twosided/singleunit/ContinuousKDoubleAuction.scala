@@ -15,35 +15,37 @@ limitations under the License.
 */
 package org.economicsl.auctions.twosided.singleunit
 
+import java.util.UUID
+
 import org.economicsl.auctions.orderbooks.{SortedAskOrderBook, SortedBidOrderBook}
 import org.economicsl.auctions.orders.Persistent
-import org.economicsl.auctions.{Fill, Price, Tradable}
+import org.economicsl.auctions.{Fill, Price, Tradable, UUIDProvider}
 
 
-class ContinuousKDoubleAuction(k: Double, tradable: Tradable) extends ContinuousDoubleAuction {
+class ContinuousKDoubleAuction(k: Double, tradable: Tradable) extends ContinuousDoubleAuction with UUIDProvider {
 
   type AB = SortedAskOrderBook[A with Persistent]
   type BB = SortedBidOrderBook[B with Persistent]
 
-  def fill(order: A): Option[Fill[A, B with Persistent]] = findMatchFor(order) match {
+  def fill(order: A): Either[Option[UUID], Fill[A, B with Persistent]] = findMatchFor(order) match {
     case Some((askOrder, bidOrder, orderBook)) =>
       bidOrderBook = orderBook  // SIDE EFFECT!
       val price = Price(k * bidOrder.limit.value + (1 - k) * askOrder.limit.value)
-      Some(Fill(askOrder, bidOrder, price))
+      Right(Fill(askOrder, bidOrder, price))
     case None => order match {
-      case unmatchedOrder: Persistent => place(unmatchedOrder); None
-      case _ => None
+      case unmatchedOrder: Persistent => Left(Some(place(unmatchedOrder)))
+      case _ => Left(None)
     }
   }
 
-  def fill(order: B): Option[Fill[A with Persistent, B]] = findMatchFor(order) match {
+  def fill(order: B): Either[Option[UUID], Fill[A with Persistent, B]] = findMatchFor(order) match {
     case Some((askOrder, bidOrder, orderBook)) =>
       askOrderBook = orderBook  // SIDE EFFECT!
       val price = Price(k * bidOrder.limit.value + (1 - k) * askOrder.limit.value)
-      Some(Fill(askOrder, bidOrder, price))
+      Right(Fill(askOrder, bidOrder, price))
     case None => order match {
-      case unmatchedOrder: Persistent => place(unmatchedOrder); None
-      case _ => None
+      case unmatchedOrder: Persistent => Left(Some(place(unmatchedOrder)))
+      case _ => Left(None)
     }
   }
 
@@ -52,8 +54,8 @@ class ContinuousKDoubleAuction(k: Double, tradable: Tradable) extends Continuous
     * @param order a `LimitAskOrder with Persistent with Quantity` instance to add to the `OrderBook`
     * @note default implementation simply forwards the `order` to the `place` method of the `reverseAuction`.
     */
-  def place(order: A with Persistent): Unit = {
-    askOrderBook = askOrderBook + order
+  def place(order: A with Persistent): UUID = {
+    val uuid = randomUUID(); askOrderBook = askOrderBook + (uuid, order); uuid
   }
 
   /** Place a `LimitBidOrder with Persistent with Quantity` into the `OrderBook`.
@@ -61,17 +63,17 @@ class ContinuousKDoubleAuction(k: Double, tradable: Tradable) extends Continuous
     * @param order a `LimitBidOrder with Persistent with Quantity` instance to add to the `OrderBook`
     * @note default implementation simply forwards the `order` to the `place` method of the `auction`.
     */
-  def place(order: B with Persistent): Unit = {
-    bidOrderBook = bidOrderBook + order
+  def place(order: B with Persistent): UUID = {
+    val uuid = randomUUID(); bidOrderBook = bidOrderBook + (uuid, order); uuid
   }
 
   protected def findMatchFor(order: A): Option[(A, B with Persistent, BB)] = bidOrderBook.headOption match {
-    case Some((_, bidOrder)) if order.limit <= bidOrder.limit => Some(order, bidOrder, bidOrderBook - bidOrder)
+    case Some((uuid, bidOrder)) if order.limit <= bidOrder.limit => Some(order, bidOrder, bidOrderBook - (uuid, bidOrder))
     case _ => None
   }
 
   protected def findMatchFor(order: B): Option[(A with Persistent, B, AB)] = askOrderBook.headOption match {
-    case Some((_, askOrder)) if order.limit >= askOrder.limit => Some(askOrder, order, askOrderBook - askOrder)
+    case Some((uuid, askOrder)) if order.limit >= askOrder.limit => Some(askOrder, order, askOrderBook - (uuid, askOrder))
     case _ => None
   }
 

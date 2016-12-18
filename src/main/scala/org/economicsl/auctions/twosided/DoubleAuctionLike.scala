@@ -32,16 +32,18 @@ sealed trait DoubleAuctionLike {
   /** Place a `LimitAskOrder with Persistent with Quantity` into the `OrderBook`.
     *
     * @param order a `LimitAskOrder with Persistent with Quantity` instance to add to the `OrderBook`
+    * @return a `UUID` that uniquely identifies the `order` in the underlying `askOrderBook`.
     * @note default implementation simply forwards the `order` to the `place` method of the `reverseAuction`.
     */
-  def place(order: A with Persistent): Unit
+  def place(order: A with Persistent): UUID
 
   /** Place a `LimitBidOrder with Persistent with Quantity` into the `OrderBook`.
     *
     * @param order a `LimitBidOrder with Persistent with Quantity` instance to add to the `OrderBook`
+    * @return a `UUID` that uniquely identifies the `order` in the underlying `bidOrderBook`.
     * @note default implementation simply forwards the `order` to the `place` method of the `auction`.
     */
-  def place(order: B with Persistent): Unit
+  def place(order: B with Persistent): UUID
 
 }
 
@@ -52,9 +54,9 @@ trait ContinuousDoubleAuction extends DoubleAuctionLike {
   type AB <: OrderBook[A with Persistent, collection.GenIterable[(UUID, A with Persistent)]]
   type BB <: OrderBook[B with Persistent, collection.GenIterable[(UUID, B with Persistent)]]
 
-  def fill(order: A): Option[Fill[A, B with Persistent]]
+  def fill(order: A): Either[Option[UUID], Fill[A, B with Persistent]]
 
-  def fill(order: B): Option[Fill[A with Persistent, B]]
+  def fill(order: B): Either[Option[UUID], Fill[A with Persistent, B]]
 
   protected def askOrderBook: AB
 
@@ -72,7 +74,7 @@ trait PeriodicDoubleAuction extends DoubleAuctionLike {
   type B <: LimitBidOrder with Persistent with Quantity
   type BB <: OrderBook[B, collection.GenIterable[(UUID, B)]]
 
-  def fill(): Option[Iterable[Fill[A, B]]]
+  def fill(): Option[collection.GenIterable[Fill[A, B]]]
 
   protected def askOrderBook: AB
 

@@ -17,36 +17,30 @@ package org.economicsl.auctions.singleunit
 
 import java.util.UUID
 
-import org.economicsl.auctions.orderbooks.SortedBidOrderBook
 import org.economicsl.auctions.orders.{LimitAskOrder, SingleUnit}
-import org.economicsl.auctions.{Fill, Price, Tradable}
+import org.economicsl.auctions._
+import org.economicsl.auctions.orderbooks.SortedBidOrderBook
 
 
-class FirstPriceSealedBidAuction(tradable: Tradable) extends AscendingPriceAuction {
+/** Class defining a first-price, sealed-bid auction mechanism. */
+class FirstPriceSealedBidAuction(tradable: Tradable) extends SingleUnitAuction with AscendingBidOrders {
 
   type A = LimitAskOrder with SingleUnit
 
-  def fill(order: A): Option[Fill[A, B]] = {
-    findMatchFor(order, orderBook) map {
-      case (_, bidOrder) =>
-        orderBook = orderBook - bidOrder // SIDE EFFECT!
-        val price = formPriceUsing(order, bidOrder)
-        Fill(order, bidOrder, price)
-    }
+  def fill(order: A): Option[Fill[A, B]] = orderBook.headOption match {
+    case Some((uuid, bidOrder)) if bidOrder.limit >= order.limit =>
+      orderBook = orderBook - (uuid, bidOrder)
+      Some(Fill(order, bidOrder, bidOrder.limit))
+    case None => None
   }
 
   /** Place a `LimitBidOrder with Persistent with SingleUnit` into the `SortedBidOrderBook`.
     *
-    * @param order a `LimitBidOrder with Persistent with Quantity` instance to add to the `SortedBidOrderBook`
+    * @param order a `LimitBidOrder with Persistent with SingleUnit` instance.
+    * @return a `UUID` that identifies the `order`.
     */
-  def place(order: B): Unit = orderBook + order
-
-  protected def findMatchFor(order: A, orderBook: OB): Option[(UUID, B)] = {
-    orderBook.headOption filter { case (_, bidOrder) => bidOrder.limit >= order.limit }
-  }
-
-  protected def formPriceUsing(order: A, matchingOrder: B): Price = {
-    matchingOrder.limit
+  def place(order: B): UUID = {
+    val uuid = randomUUID(); orderBook + (uuid, order); uuid
   }
 
   @volatile protected var orderBook: OB = SortedBidOrderBook[B](tradable)

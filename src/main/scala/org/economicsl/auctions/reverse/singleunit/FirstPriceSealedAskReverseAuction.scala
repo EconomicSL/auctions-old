@@ -19,34 +19,28 @@ import java.util.UUID
 
 import org.economicsl.auctions.orderbooks.SortedAskOrderBook
 import org.economicsl.auctions.orders.{LimitBidOrder, SingleUnit}
-import org.economicsl.auctions.{Fill, Price, Tradable}
+import org.economicsl.auctions.reverse.{DescendingAskOrders, SingleUnitReverseAuction}
+import org.economicsl.auctions.{Fill, Tradable}
 
 
-class FirstPriceSealedAskReverseAuction(tradable: Tradable) extends DescendingPriceReverseAuction {
+/** Class defining a first-price, sealed-ask, reverse auction mechanism. */
+class FirstPriceSealedAskReverseAuction(tradable: Tradable) extends SingleUnitReverseAuction with DescendingAskOrders {
 
   type B = LimitBidOrder with SingleUnit
 
-  def fill(order: B): Option[Fill[A, B]] = {
-    findMatchFor(order, orderBook) map {
-      case (_, askOrder) =>
-        orderBook = orderBook - askOrder // SIDE EFFECT!
-      val price = formPriceUsing(order, askOrder)
-        Fill(askOrder, order, price)
-    }
+  def fill(order: B): Option[Fill[A, B]] = orderBook.headOption match {
+    case Some((uuid, askOrder)) if askOrder.limit <= order.limit =>
+      orderBook = orderBook - (uuid, askOrder) // SIDE EFFECT!
+      Some(Fill(askOrder, order, askOrder.limit))
+    case None => None
   }
 
-  /** Place a `LimitBidOrder with Persistent with SingleUnit` into the `SortedBidOrderBook`.
+  /** Place a `LimitAskOrder with Persistent with SingleUnit` into the `SortedAskOrderBook`.
     *
-    * @param order a `LimitBidOrder with Persistent with Quantity` instance to add to the `SortedBidOrderBook`
+    * @param order a `LimitAskOrder with Persistent with SingleUnit` instance.
     */
-  def place(order: A): Unit = orderBook - order
-
-  protected def findMatchFor(order: B, orderBook: OB): Option[(UUID, A)] = {
-    orderBook.headOption filter { case (_, askOrder) => askOrder.limit >= order.limit }
-  }
-
-  protected def formPriceUsing(order: B, matchingOrder: A): Price = {
-    matchingOrder.limit
+  def place(order: A): UUID = {
+    val uuid = randomUUID(); orderBook + (uuid, order); uuid
   }
 
   @volatile protected var orderBook: OB = SortedAskOrderBook[A](tradable)
