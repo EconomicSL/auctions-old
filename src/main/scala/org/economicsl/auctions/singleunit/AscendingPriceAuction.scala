@@ -13,10 +13,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package org.economicsl.auctions
+package org.economicsl.auctions.singleunit
 
 import java.util.UUID
 
+import org.economicsl.auctions._
 import org.economicsl.auctions.orderbooks.SortedBidOrderBook
 import org.economicsl.auctions.orders.{LimitAskOrder, LimitBidOrder, Persistent, SingleUnit}
 
@@ -26,11 +27,11 @@ import org.economicsl.auctions.orders.{LimitAskOrder, LimitBidOrder, Persistent,
   * @tparam A a sub-type of `LimitAskOrder with SingleUnit`
   * @tparam B a sub-type of `LimitBidOrder with Persistent with SingleUnit`.
   */
-trait SingleUnitAscendingPriceAuction[A <: LimitAskOrder with SingleUnit, B <: LimitBidOrder with Persistent with SingleUnit]
+trait AscendingPriceAuction[A <: LimitAskOrder with SingleUnit, B <: LimitBidOrder with Persistent with SingleUnit]
   extends SingleUnitAuction[A, B] with AscendingBidOrders[A, B]
 
 
-object SingleUnitAscendingPriceAuction {
+object AscendingPriceAuction {
 
   /** Create an instance of a `SingleUnitAscendingPriceAuction`.
     *
@@ -46,7 +47,7 @@ object SingleUnitAscendingPriceAuction {
             pricingRule: (A, B) => Price,
             tradable: Tradable)
            (implicit ordering: Ordering[(UUID, B)])
-           : SingleUnitAscendingPriceAuction[A, B] = {
+           : AscendingPriceAuction[A, B] = {
     new DefaultImpl[A, B](matchingRule, pricingRule, tradable)(ordering)
   }
 
@@ -65,7 +66,7 @@ object SingleUnitAscendingPriceAuction {
                                   pricingRule: (A, B) => Price,
                                   val tradable: Tradable)
                                  (implicit ordering: Ordering[(UUID, B)])
-    extends SingleUnitAscendingPriceAuction[A, B] {
+    extends AscendingPriceAuction[A, B] {
 
     def fill(order: A): Option[Fill] = findMatchFor(order, orderBook) map {
       case (_, bidOrder) =>
