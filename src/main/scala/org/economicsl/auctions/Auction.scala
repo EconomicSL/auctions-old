@@ -22,7 +22,7 @@ import org.economicsl.auctions.orders._
 
 
 /** Base trait defining the interface for all `Auction` instances. */
-sealed trait Auction[A <: LimitAskOrder with Quantity, B <: LimitBidOrder with Persistent with Quantity] {
+sealed trait Auction[A <: AskOrder with PriceQuantitySchedule, B <: BidOrder with Persistent with PriceQuantitySchedule] {
 
   type OB <: OrderBook[B, collection.GenIterable[(UUID, B)]]
 
@@ -45,10 +45,10 @@ sealed trait Auction[A <: LimitAskOrder with Quantity, B <: LimitBidOrder with P
 
 
 /** Base trait defining the interface for all `SingleUnitAuction` instances. */
-trait SingleUnitAuction[A <: LimitAskOrder with SingleUnit, B <: LimitBidOrder with Persistent with SingleUnit]
+trait SingleUnitAuction[A <: AskOrder with SingleUnit, B <: BidOrder with Persistent with SingleUnit]
   extends Auction[A, B]
 
 
 /** Base trait defining the interface for all `MultiUnitAuction` instances. */
-trait MultiUnitAuction[A <: LimitAskOrder with MultiUnit, B <: LimitBidOrder with Persistent with MultiUnit]
+trait SinglePricePointAuction[A <: AskOrder with SinglePricePoint, B <: BidOrder with Persistent with SinglePricePoint]
   extends Auction[A, B]

@@ -28,16 +28,15 @@ class SortedAskOrderBook[A <: AskOrder with Persistent] private (initialOrders: 
                                                                 (implicit ordering: Ordering[(UUID, A)])
   extends OrderBook[A, immutable.TreeSet[(UUID, A)]] {
 
-  def + (issuer: UUID, order: A): SortedAskOrderBook[A] = {
-    new SortedAskOrderBook(existingOrders + ((issuer, order)), tradable)(ordering)
+  def + (uuid: UUID, order: A): SortedAskOrderBook[A] = {
+    new SortedAskOrderBook(existingOrders + ((uuid, order)), tradable)(ordering)
   }
 
-  def - (issuer: UUID, order: A): SortedAskOrderBook[A] = {
-    new SortedAskOrderBook(existingOrders - ((issuer, order)), tradable)(ordering)
+  def - (uuid: UUID, order: A): SortedAskOrderBook[A] = {
+    new SortedAskOrderBook(existingOrders - ((uuid, order)), tradable)(ordering)
   }
 
   def headOption: Option[(UUID, A)] = existingOrders.headOption
-
 
   protected val existingOrders: immutable.TreeSet[(UUID, A)] = initialOrders
 

@@ -15,12 +15,9 @@ limitations under the License.
 */
 package org.economicsl.auctions
 
-import org.economicsl.auctions.orders.{LimitAskOrder, LimitBidOrder, Quantity}
+import org.economicsl.auctions.orders.{AskOrder, BidOrder, PriceQuantitySchedule}
 
 
-case class Fill(askOrder: LimitAskOrder with Quantity, bidOrder: LimitBidOrder with Quantity, price: Price) {
+case class Fill(askOrder: AskOrder with PriceQuantitySchedule, bidOrder: BidOrder with PriceQuantitySchedule, price: Price, quantity: Quantity)
 
-  val quantity: Long = math.min(askOrder.quantity, bidOrder.quantity)
-
-}
 

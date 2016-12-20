@@ -19,11 +19,11 @@ import java.util.UUID
 
 import org.economicsl.auctions.orderbooks.SortedAskOrderBook
 import org.economicsl.auctions.orders.{LimitAskOrder, LimitBidOrder, Persistent, SingleUnit}
-import org.economicsl.auctions.{Fill, Price, Tradable}
+import org.economicsl.auctions.{Fill, Price, Quantity, Tradable}
 
 
 class FirstPriceSealedAskReverseAuction(tradable: Tradable)
-  extends SingleUnitDescendingPriceReverseAuction[LimitBidOrder with SingleUnit, LimitAskOrder with Persistent with SingleUnit] {
+  extends DescendingPriceReverseAuction[LimitBidOrder with SingleUnit, LimitAskOrder with Persistent with SingleUnit] {
 
   type B = LimitBidOrder with SingleUnit
   type A = LimitAskOrder with Persistent with SingleUnit
@@ -32,8 +32,8 @@ class FirstPriceSealedAskReverseAuction(tradable: Tradable)
     findMatchFor(order, orderBook) map {
       case (_, askOrder) =>
         orderBook = orderBook - (askOrder.issuer, askOrder) // SIDE EFFECT!
-      val price = formPriceUsing(order, askOrder)
-        Fill(askOrder, order, price)
+        val price = formPriceUsing(order, askOrder)
+        Fill(askOrder, order, price, Quantity(1))
     }
   }
 

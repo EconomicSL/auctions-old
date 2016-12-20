@@ -19,7 +19,7 @@ import java.util.UUID
 
 import org.economicsl.auctions.orderbooks.SortedBidOrderBook
 import org.economicsl.auctions.orders.{LimitAskOrder, LimitBidOrder, Persistent, SingleUnit}
-import org.economicsl.auctions.{Fill, Price, Tradable}
+import org.economicsl.auctions.{Fill, Price, Quantity, Tradable}
 
 
 class FirstPriceSealedBidAuction(tradable: Tradable)
@@ -33,7 +33,7 @@ class FirstPriceSealedBidAuction(tradable: Tradable)
       case (_, bidOrder) =>
         orderBook = orderBook - (bidOrder.issuer, bidOrder) // SIDE EFFECT!
         val price = formPriceUsing(order, bidOrder)
-        Fill(order, bidOrder, price)
+        Fill(order, bidOrder, price, Quantity(1))
     }
   }
 

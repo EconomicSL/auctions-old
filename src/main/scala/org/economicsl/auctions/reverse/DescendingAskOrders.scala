@@ -1,10 +1,10 @@
 package org.economicsl.auctions.reverse
 
 import org.economicsl.auctions.orderbooks.SortedAskOrderBook
-import org.economicsl.auctions.orders.{LimitAskOrder, LimitBidOrder, Persistent, Quantity}
+import org.economicsl.auctions.orders.{AskOrder, BidOrder, Persistent, PriceQuantitySchedule}
 
 
-trait DescendingAskOrders[B <: LimitBidOrder with Quantity, A <: LimitAskOrder with Persistent with Quantity] {
+trait DescendingAskOrders[B <: BidOrder with PriceQuantitySchedule, A <: AskOrder with Persistent with PriceQuantitySchedule] {
   this: ReverseAuction[B, A] =>
 
   type OB = SortedAskOrderBook[A]

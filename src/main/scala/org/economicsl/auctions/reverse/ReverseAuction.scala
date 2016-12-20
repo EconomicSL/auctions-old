@@ -23,7 +23,7 @@ import org.economicsl.auctions.orders._
 
 
 /** Base trait defining the interface for all `ReverseAuction` instances. */
-sealed trait ReverseAuction[B <: LimitBidOrder with Quantity, A <: LimitAskOrder with Persistent with Quantity] {
+sealed trait ReverseAuction[B <: BidOrder with PriceQuantitySchedule, A <: AskOrder with Persistent with PriceQuantitySchedule] {
 
   type OB <: OrderBook[A, collection.GenIterable[(UUID, A)]]
 
@@ -39,11 +39,11 @@ sealed trait ReverseAuction[B <: LimitBidOrder with Quantity, A <: LimitAskOrder
 
 
 /** Base trait defining the interface for all `SingleUnitReverseAuction` instances. */
-trait SingleUnitReverseAuction[B <: LimitBidOrder with SingleUnit, A <: LimitAskOrder with Persistent with SingleUnit]
+trait SingleUnitReverseAuction[B <: BidOrder with SingleUnit, A <: AskOrder with Persistent with SingleUnit]
   extends ReverseAuction[B, A]
 
 
 /** Base trait defining the interface for all `MultiUnitReverseAuction` instances. */
-trait MultiUnitReverseAuction[B <: LimitBidOrder with MultiUnit, A <: LimitAskOrder with Persistent with MultiUnit]
+trait SinglePricePointReverseAuction[B <: BidOrder with SinglePricePoint, A <: AskOrder with Persistent with SinglePricePoint]
   extends ReverseAuction[B, A]
 

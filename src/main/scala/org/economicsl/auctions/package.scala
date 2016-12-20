@@ -55,4 +55,6 @@ package object auctions {
 
   }
 
+  case class Quantity(value: Double) extends AnyVal
+
 }

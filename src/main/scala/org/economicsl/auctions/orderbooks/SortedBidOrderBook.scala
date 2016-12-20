@@ -28,12 +28,12 @@ class SortedBidOrderBook[B <: BidOrder with Persistent] private (initialOrders: 
                                                                 (implicit ordering: Ordering[(UUID, B)])
   extends OrderBook[B, immutable.TreeSet[(UUID, B)]] {
 
-  def + (issuer: UUID, order: B): SortedBidOrderBook[B] = {
-    new SortedBidOrderBook(existingOrders + ((issuer, order)), tradable)(ordering)
+  def + (uuid: UUID, order: B): SortedBidOrderBook[B] = {
+    new SortedBidOrderBook(existingOrders + ((uuid, order)), tradable)(ordering)
   }
 
-  def - (issuer: UUID, order: B): SortedBidOrderBook[B] = {
-    new SortedBidOrderBook(existingOrders - ((issuer, order)), tradable)(ordering)
+  def - (uuid: UUID, order: B): SortedBidOrderBook[B] = {
+    new SortedBidOrderBook(existingOrders - ((uuid, order)), tradable)(ordering)
   }
 
   def headOption: Option[(UUID, B)] = existingOrders.headOption

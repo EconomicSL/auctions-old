@@ -15,21 +15,17 @@ limitations under the License.
 */
 package org.economicsl.auctions.orders
 
-import java.util.UUID
 
-
-trait LimitBidOrder extends BidOrder with LimitPrice {
-  this: Quantity =>
-
+trait LimitBidOrder extends BidOrder {
+  this: SinglePricePoint =>
 }
-
 
 object LimitBidOrder {
 
   /** By default, instances of `LimitBidOrder` are ordered based on `limit` price from highest to lowest */
-  implicit def ordering[B <: LimitBidOrder]: Ordering[(UUID, B)] = LimitPrice.ordering.reverse
+  implicit def ordering[B <: LimitBidOrder with SinglePricePoint]: Ordering[B] = SinglePricePoint.ordering.reverse
 
   /** The highest priority `LimitBidOrder` is the one with the highest `limit` price. */
-  def priority[B <: LimitBidOrder]: Ordering[(UUID, B)] = LimitPrice.ordering
+  def priority[B <: LimitBidOrder with SinglePricePoint]: Ordering[B] = SinglePricePoint.ordering
 
 }

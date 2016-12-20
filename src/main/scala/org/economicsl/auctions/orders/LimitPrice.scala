@@ -29,19 +29,3 @@ trait LimitPrice {
 }
 
 
-/** Companion object for the `LimitPrice` trait.
-  *
-  * Defines a basic ordering for all `Order with LimitPrice` instances.
-  */
-object LimitPrice {
-
-  /** By default, all `Order` instances that mixin `LimitPrice` are ordered by `limit` from lowest to highest.
-    *
-    * @tparam O the sub-type of `Order with LimitPrice` that is being ordered.
-    * @return and `Ordering` defined over `Order with LimitPrice` instances of type `T`.
-    * @note if two `Order with LimitPrice` instances have the same `limit` price, then the ordering is based on the
-    *       unique `issuer` identifier.
-    */
-  def ordering[O <: Order with LimitPrice]: Ordering[(UUID, O)] = Ordering.by { case (_, order) => order.limit }
-
-}
