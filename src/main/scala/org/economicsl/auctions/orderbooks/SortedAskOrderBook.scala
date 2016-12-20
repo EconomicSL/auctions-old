@@ -18,7 +18,8 @@ package org.economicsl.auctions.orderbooks
 import java.util.UUID
 
 import org.economicsl.auctions.Tradable
-import org.economicsl.auctions.orders.{AskOrder, Persistent}
+import org.economicsl.auctions.orders.AskOrder
+import org.economicsl.auctions.orders.persistent.Persistent
 
 import scala.collection.immutable
 

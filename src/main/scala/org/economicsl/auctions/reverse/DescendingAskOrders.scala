@@ -1,7 +1,8 @@
 package org.economicsl.auctions.reverse
 
 import org.economicsl.auctions.orderbooks.SortedAskOrderBook
-import org.economicsl.auctions.orders.{AskOrder, BidOrder, Persistent, PriceQuantitySchedule}
+import org.economicsl.auctions.orders.persistent.Persistent
+import org.economicsl.auctions.orders.{AskOrder, BidOrder, PriceQuantitySchedule}
 
 
 trait DescendingAskOrders[B <: BidOrder with PriceQuantitySchedule, A <: AskOrder with Persistent with PriceQuantitySchedule] {

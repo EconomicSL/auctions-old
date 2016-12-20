@@ -16,7 +16,8 @@ limitations under the License.
 package org.economicsl.auctions.twosided
 
 import org.economicsl.auctions.orders._
-import org.economicsl.auctions.reverse.{SinglePricePointReverseAuction, ReverseAuction, SingleUnitReverseAuction}
+import org.economicsl.auctions.orders.persistent.Persistent
+import org.economicsl.auctions.reverse.{ReverseAuction, SinglePricePointReverseAuction, SingleUnitReverseAuction}
 import org.economicsl.auctions.{Auction, SinglePricePointAuction, SingleUnitAuction}
 
 

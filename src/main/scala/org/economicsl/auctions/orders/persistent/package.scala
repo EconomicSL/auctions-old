@@ -16,10 +16,4 @@ limitations under the License.
 package org.economicsl.auctions.orders
 
 
-/** Mixin trait used to indicate that an `Order` can be stored in an `OrderBook`. */
-trait Persistent {
-  this: Order =>
-
-  val isPersistent: Boolean = true
-
-}
+package object persistent

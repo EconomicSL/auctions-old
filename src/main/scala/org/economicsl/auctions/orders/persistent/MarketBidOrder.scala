@@ -13,31 +13,32 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package org.economicsl.auctions.orders
+package org.economicsl.auctions.orders.persistent
 
 import java.util.UUID
 
+import org.economicsl.auctions.orders
 import org.economicsl.auctions.{Quantity, Tradable}
 
 
-trait PersistentMarketBidOrder extends MarketBidOrder with Persistent {
-  this: SinglePricePoint =>
+trait MarketBidOrder extends orders.MarketBidOrder with Persistent {
+  this: orders.SinglePricePoint =>
 }
 
-object PersistentMarketBidOrder {
+object MarketBidOrder {
 
-  def apply(issuer: UUID, quantity: Quantity, tradable: Tradable): PersistentMarketBidOrder with SinglePricePoint = {
+  def apply(issuer: UUID, quantity: Quantity, tradable: Tradable): MarketBidOrder with orders.SinglePricePoint = {
     SinglePricePointImpl(issuer, quantity, tradable)
   }
 
-  def apply(issuer: UUID, tradable: Tradable): PersistentMarketBidOrder with SingleUnit = {
+  def apply(issuer: UUID, tradable: Tradable): MarketBidOrder with orders.SingleUnit = {
     SingleUnitImpl(issuer, tradable)
   }
 
   private[this] case class SinglePricePointImpl(issuer: UUID, quantity: Quantity, tradable: Tradable)
-    extends PersistentMarketBidOrder with SinglePricePoint
+    extends MarketBidOrder with orders.SinglePricePoint
 
   private[this] case class SingleUnitImpl(issuer: UUID, tradable: Tradable)
-    extends PersistentMarketBidOrder with SingleUnit
+    extends MarketBidOrder with orders.SingleUnit
 
 }

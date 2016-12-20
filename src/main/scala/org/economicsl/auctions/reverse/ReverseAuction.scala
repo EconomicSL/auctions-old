@@ -20,6 +20,7 @@ import java.util.UUID
 import org.economicsl.auctions.Fill
 import org.economicsl.auctions.orderbooks.OrderBook
 import org.economicsl.auctions.orders._
+import org.economicsl.auctions.orders.persistent.Persistent
 
 
 /** Base trait defining the interface for all `ReverseAuction` instances. */

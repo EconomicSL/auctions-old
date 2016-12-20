@@ -13,20 +13,15 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package org.economicsl.auctions
+package org.economicsl.auctions.orders.persistent
 
-import org.economicsl.auctions.orderbooks.SortedBidOrderBook
-import org.economicsl.auctions.orders.persistent.Persistent
-import org.economicsl.auctions.orders.{AskOrder, BidOrder, PriceQuantitySchedule}
+import org.economicsl.auctions.orders
 
 
-trait AscendingBidOrders[A <: AskOrder with PriceQuantitySchedule, B <: BidOrder with Persistent with PriceQuantitySchedule] {
-  this: Auction[A, B] =>
+/** Mixin trait used to indicate that an `Order` can be stored in an `OrderBook`. */
+trait Persistent {
+  this: orders.Order =>
 
-  type OB = SortedBidOrderBook[B]
-
-  protected def orderBook: OB
+  val isPersistent: Boolean = true
 
 }
-
-

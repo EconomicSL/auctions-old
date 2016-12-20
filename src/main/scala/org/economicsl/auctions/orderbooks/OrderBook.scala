@@ -17,7 +17,8 @@ package org.economicsl.auctions.orderbooks
 
 import java.util.UUID
 
-import org.economicsl.auctions.orders.{Order, Persistent}
+import org.economicsl.auctions.orders.Order
+import org.economicsl.auctions.orders.persistent.Persistent
 
 
 /** Base trait defining the interface for all `OrderBook` instances. */

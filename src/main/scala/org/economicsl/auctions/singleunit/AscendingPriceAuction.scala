@@ -19,7 +19,8 @@ import java.util.UUID
 
 import org.economicsl.auctions._
 import org.economicsl.auctions.orderbooks.SortedBidOrderBook
-import org.economicsl.auctions.orders.{AskOrder, BidOrder, Persistent, SingleUnit}
+import org.economicsl.auctions.orders.persistent.Persistent
+import org.economicsl.auctions.orders.{AskOrder, BidOrder, SingleUnit}
 
 
 /** Class defining a single-unit ascending price auction.

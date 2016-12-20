@@ -18,7 +18,8 @@ package org.economicsl.auctions.singleunit
 import java.util.UUID
 
 import org.economicsl.auctions.orderbooks.SortedBidOrderBook
-import org.economicsl.auctions.orders.{LimitAskOrder, LimitBidOrder, Persistent, SingleUnit}
+import org.economicsl.auctions.orders.persistent.Persistent
+import org.economicsl.auctions.orders.{LimitAskOrder, LimitBidOrder, SingleUnit}
 import org.economicsl.auctions.{Fill, Price, Quantity, Tradable}
 
 

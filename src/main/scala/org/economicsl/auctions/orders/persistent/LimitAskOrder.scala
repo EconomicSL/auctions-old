@@ -13,31 +13,32 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package org.economicsl.auctions.orders
+package org.economicsl.auctions.orders.persistent
 
 import java.util.UUID
 
+import org.economicsl.auctions.orders
 import org.economicsl.auctions.{Price, Quantity, Tradable}
 
 
-trait PersistentLimitAskOrder extends LimitAskOrder with Persistent {
-  this: SinglePricePoint =>
+trait LimitAskOrder extends orders.LimitAskOrder with Persistent {
+  this: orders.SinglePricePoint =>
 }
 
-object PersistentLimitAskOrder {
+object LimitAskOrder {
 
-  def apply(issuer: UUID, limit: Price, quantity: Quantity, tradable: Tradable): PersistentLimitAskOrder with SinglePricePoint = {
+  def apply(issuer: UUID, limit: Price, quantity: Quantity, tradable: Tradable): LimitAskOrder with orders.SinglePricePoint = {
     SinglePricePointImpl(issuer, limit, quantity, tradable)
   }
 
-  def apply(issuer: UUID, limit: Price, tradable: Tradable): PersistentLimitAskOrder with SingleUnit = {
+  def apply(issuer: UUID, limit: Price, tradable: Tradable): LimitAskOrder with orders.SingleUnit = {
     SingleUnitImpl(issuer, limit, tradable)
   }
 
   private[this] case class SinglePricePointImpl(issuer: UUID, limit: Price, quantity: Quantity, tradable: Tradable)
-    extends PersistentLimitAskOrder with SinglePricePoint
+    extends LimitAskOrder with orders.SinglePricePoint
 
   private[this] case class SingleUnitImpl(issuer: UUID, limit: Price, tradable: Tradable)
-    extends PersistentLimitAskOrder with SingleUnit
+    extends LimitAskOrder with orders.SingleUnit
 
 }
