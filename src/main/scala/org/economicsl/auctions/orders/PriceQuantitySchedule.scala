@@ -15,8 +15,6 @@ limitations under the License.
 */
 package org.economicsl.auctions.orders
 
-import java.util.UUID
-
 import org.economicsl.auctions.{Price, Quantity}
 
 import scala.collection.immutable

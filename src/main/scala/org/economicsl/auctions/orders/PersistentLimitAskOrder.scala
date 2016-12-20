@@ -20,39 +20,24 @@ import java.util.UUID
 import org.economicsl.auctions.{Price, Quantity, Tradable}
 
 
-trait LimitAskOrder extends AskOrder {
+trait PersistentLimitAskOrder extends LimitAskOrder with Persistent {
   this: SinglePricePoint =>
 }
 
+object PersistentLimitAskOrder {
 
-object LimitAskOrder {
-
-  /** By default, instances of `LimitAskOrder` are ordered based on `limit` price from lowest to highest. */
-  implicit def ordering[A <: LimitAskOrder with SinglePricePoint]: Ordering[A] = SinglePricePoint.ordering
-
-  /** The highest priority `LimitAskOrder` is the one with the lowest `limit` price. */
-  def priority[A <: LimitAskOrder with SinglePricePoint]: Ordering[A] = SinglePricePoint.ordering.reverse
-
-  def apply(issuer: UUID, limit: Price, quantity: Quantity, tradable: Tradable): LimitAskOrder with SinglePricePoint = {
+  def apply(issuer: UUID, limit: Price, quantity: Quantity, tradable: Tradable): PersistentLimitAskOrder with SinglePricePoint = {
     SinglePricePointImpl(issuer, limit, quantity, tradable)
   }
 
-  def apply(issuer: UUID, limit: Price, tradable: Tradable): LimitAskOrder with SingleUnit = {
+  def apply(issuer: UUID, limit: Price, tradable: Tradable): PersistentLimitAskOrder with SingleUnit = {
     SingleUnitImpl(issuer, limit, tradable)
   }
 
   private[this] case class SinglePricePointImpl(issuer: UUID, limit: Price, quantity: Quantity, tradable: Tradable)
-    extends LimitAskOrder with SinglePricePoint {
-
-    val isPersistent: Boolean = false
-
-  }
+    extends PersistentLimitAskOrder with SinglePricePoint
 
   private[this] case class SingleUnitImpl(issuer: UUID, limit: Price, tradable: Tradable)
-    extends LimitAskOrder with SingleUnit {
-
-    val isPersistent: Boolean = false
-
-  }
+    extends PersistentLimitAskOrder with SingleUnit
 
 }
