@@ -5,16 +5,14 @@ import org.economicsl.auctions.orders.{LimitAskOrder, LimitBidOrder, SingleUnit,
 import scala.collection.immutable
 
 
-class FourHeapOrderBook private (matchedAskOrders: immutable.TreeSet[persistent.LimitAskOrder with SingleUnit],
-                                 matchedBidOrders: immutable.TreeSet[persistent.LimitBidOrder with SingleUnit],
-                                 unMatchedAskOrders: immutable.TreeSet[persistent.LimitAskOrder with SingleUnit],
-                                 unMatchedBidOrders: immutable.TreeSet[persistent.LimitBidOrder with SingleUnit]) {
+case class FourHeapOrderBook private (matchedAskOrders: immutable.TreeSet[persistent.LimitAskOrder with SingleUnit],
+                                      matchedBidOrders: immutable.TreeSet[persistent.LimitBidOrder with SingleUnit],
+                                      unMatchedAskOrders: immutable.TreeSet[persistent.LimitAskOrder with SingleUnit],
+                                      unMatchedBidOrders: immutable.TreeSet[persistent.LimitBidOrder with SingleUnit]) {
 
   require(matchedAskOrders.size == matchedBidOrders.size)
-  assert(unMatchedBidOrders.headOption.forall( o => matchedBidOrders.head.limit >= o.limit ))
-  assert(unMatchedAskOrders.headOption.forall( o => matchedAskOrders.head.limit >= o.limit ))
 
-  def get(order: persistent.LimitAskOrder with SingleUnit): FourHeapOrderBook = {
+  def - (order: persistent.LimitAskOrder with SingleUnit): FourHeapOrderBook = {
     if (unMatchedAskOrders.contains(order)) {
       new FourHeapOrderBook(matchedAskOrders, matchedBidOrders, unMatchedAskOrders - order, unMatchedBidOrders)
     } else {
@@ -23,7 +21,7 @@ class FourHeapOrderBook private (matchedAskOrders: immutable.TreeSet[persistent.
     }
   }
 
-  def get(order: persistent.LimitBidOrder with SingleUnit): FourHeapOrderBook = {
+  def - (order: persistent.LimitBidOrder with SingleUnit): FourHeapOrderBook = {
     if (unMatchedBidOrders.contains(order)) {
       new FourHeapOrderBook(matchedAskOrders, matchedBidOrders, unMatchedAskOrders, unMatchedBidOrders - order)
     } else {
@@ -32,7 +30,7 @@ class FourHeapOrderBook private (matchedAskOrders: immutable.TreeSet[persistent.
     }
   }
 
-  def put(order: persistent.LimitAskOrder with SingleUnit): FourHeapOrderBook = {
+  def + (order: persistent.LimitAskOrder with SingleUnit): FourHeapOrderBook = {
     (matchedAskOrders.headOption, unMatchedBidOrders.headOption) match {
       case (Some(askOrder), Some(bidOrder)) if order.limit <= bidOrder.limit && askOrder.limit <= bidOrder.limit =>
         new FourHeapOrderBook(matchedAskOrders + order, matchedBidOrders + bidOrder, unMatchedAskOrders, unMatchedBidOrders - bidOrder)
@@ -40,12 +38,12 @@ class FourHeapOrderBook private (matchedAskOrders: immutable.TreeSet[persistent.
         new FourHeapOrderBook(matchedAskOrders + order, matchedBidOrders + bidOrder, unMatchedAskOrders, unMatchedBidOrders - bidOrder)
       case (Some(askOrder), Some(_)) if order.limit < askOrder.limit =>
         new FourHeapOrderBook(matchedAskOrders - askOrder + order, matchedBidOrders, unMatchedAskOrders + askOrder, unMatchedBidOrders)
-      case _ => unMatchedAskOrders += order
+      case _ =>
         new FourHeapOrderBook(matchedAskOrders, matchedBidOrders, unMatchedAskOrders + order, unMatchedBidOrders)
     }
   }
 
-  def put(order: persistent.LimitBidOrder with SingleUnit): FourHeapOrderBook = {
+  def + (order: persistent.LimitBidOrder with SingleUnit): FourHeapOrderBook = {
     (matchedBidOrders.headOption, unMatchedAskOrders.headOption) match {
       case (Some(bidOrder), Some(askOrder)) if order.limit >= askOrder.limit && bidOrder.limit >= askOrder.limit =>
         new FourHeapOrderBook(matchedAskOrders + askOrder, matchedBidOrders + order, unMatchedAskOrders - askOrder, unMatchedBidOrders)
@@ -76,5 +74,5 @@ object FourHeapOrderBook {
 
     new FourHeapOrderBook(matchedAskOrders, matchedBidOrders, unMatchedAskOrders, unMatchedBidOrders)
   }
-  
+
 }
