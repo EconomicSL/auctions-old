@@ -19,19 +19,18 @@ import java.util.UUID
 
 import org.economicsl.auctions.orderbooks.OrderBook
 import org.economicsl.auctions.orders._
-import org.economicsl.auctions.orders.persistent.Persistent
 
 
 /** Base trait defining the interface for all `Auction` instances. */
-sealed trait Auction[A <: AskOrder with PriceQuantitySchedule, B <: BidOrder with Persistent with PriceQuantitySchedule] {
+sealed trait Auction[A <: AskOrder with PriceQuantitySchedule, B <: BidOrder with PriceQuantitySchedule] {
 
   type OB <: OrderBook[B, collection.GenIterable[(UUID, B)]]
 
   def fill(order: A): Option[Fill]
 
-  /** Place a `LimitBidOrder with Persistent with Quantity` into the `OrderBook`.
+  /** Place a `LimitBidOrder  with Quantity` into the `OrderBook`.
     *
-    * @param order a `LimitBidOrder with Persistent with Quantity` instance to add to the `OrderBook`
+    * @param order a `LimitBidOrder  with Quantity` instance to add to the `OrderBook`
     */
   def place(order: B): Unit
 
@@ -39,17 +38,17 @@ sealed trait Auction[A <: AskOrder with PriceQuantitySchedule, B <: BidOrder wit
 
   protected def formPriceUsing(order: A, matchingOrder: B): Price
 
-  /** Underlying `OrderBook` used to store the `LimitBidOrder with Persistent` instances. */
+  /** Underlying `OrderBook` used to store the `LimitBidOrder ` instances. */
   protected def orderBook: OB
 
 }
 
 
 /** Base trait defining the interface for all `SingleUnitAuction` instances. */
-trait SingleUnitAuction[A <: AskOrder with SingleUnit, B <: BidOrder with Persistent with SingleUnit]
+trait SingleUnitAuction[A <: AskOrder with SingleUnit, B <: BidOrder with SingleUnit]
   extends Auction[A, B]
 
 
 /** Base trait defining the interface for all `MultiUnitAuction` instances. */
-trait SinglePricePointAuction[A <: AskOrder with SinglePricePoint, B <: BidOrder with Persistent with SinglePricePoint]
+trait SinglePricePointAuction[A <: AskOrder with SinglePricePoint, B <: BidOrder with SinglePricePoint]
   extends Auction[A, B]

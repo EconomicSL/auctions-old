@@ -18,16 +18,15 @@ package org.economicsl.auctions.reverse.singleunit
 import java.util.UUID
 
 import org.economicsl.auctions.orderbooks.SortedAskOrderBook
-import org.economicsl.auctions.orders.persistent.Persistent
 import org.economicsl.auctions.orders.{LimitAskOrder, LimitBidOrder, SingleUnit}
 import org.economicsl.auctions.{Fill, Price, Quantity, Tradable}
 
 
 class FirstPriceSealedAskReverseAuction(tradable: Tradable)
-  extends DescendingPriceReverseAuction[LimitBidOrder with SingleUnit, LimitAskOrder with Persistent with SingleUnit] {
+  extends DescendingPriceReverseAuction[LimitBidOrder with SingleUnit, LimitAskOrder with SingleUnit] {
 
   type B = LimitBidOrder with SingleUnit
-  type A = LimitAskOrder with Persistent with SingleUnit
+  type A = LimitAskOrder  with SingleUnit
 
   def fill(order: B): Option[Fill] = {
     findMatchFor(order, orderBook) map {
@@ -38,9 +37,9 @@ class FirstPriceSealedAskReverseAuction(tradable: Tradable)
     }
   }
 
-  /** Place a `LimitBidOrder with Persistent with SingleUnit` into the `SortedBidOrderBook`.
+  /** Place a `LimitBidOrder  with SingleUnit` into the `SortedBidOrderBook`.
     *
-    * @param order a `LimitBidOrder with Persistent with Quantity` instance to add to the `SortedBidOrderBook`
+    * @param order a `LimitBidOrder  with Quantity` instance to add to the `SortedBidOrderBook`
     */
   def place(order: A): Unit = orderBook - (order.issuer, order)
 

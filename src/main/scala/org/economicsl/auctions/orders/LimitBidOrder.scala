@@ -15,6 +15,10 @@ limitations under the License.
 */
 package org.economicsl.auctions.orders
 
+import java.util.UUID
+
+import org.economicsl.auctions.{Price, Quantity, Tradable}
+
 
 trait LimitBidOrder extends BidOrder {
   this: SinglePricePoint =>
@@ -27,5 +31,19 @@ object LimitBidOrder {
 
   /** The highest priority `LimitBidOrder` is the one with the highest `limit` price. */
   def priority[B <: LimitBidOrder with SinglePricePoint]: Ordering[B] = SinglePricePoint.ordering
+
+  def apply(issuer: UUID, limit: Price, quantity: Quantity, tradable: Tradable): LimitBidOrder with SinglePricePoint = {
+    SinglePricePointImpl(issuer, limit, quantity, tradable)
+  }
+
+  def apply(issuer: UUID, limit: Price, tradable: Tradable): LimitBidOrder with SingleUnit = {
+    SingleUnitImpl(issuer, limit, tradable)
+  }
+
+  private[this] case class SinglePricePointImpl(issuer: UUID, limit: Price, quantity: Quantity, tradable: Tradable)
+    extends LimitBidOrder with SinglePricePoint
+
+  private[this] case class SingleUnitImpl(issuer: UUID, limit: Price, tradable: Tradable)
+    extends LimitBidOrder with SingleUnit
 
 }

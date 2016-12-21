@@ -16,38 +16,37 @@ limitations under the License.
 package org.economicsl.auctions.twosided
 
 import org.economicsl.auctions.orders._
-import org.economicsl.auctions.orders.persistent.Persistent
 import org.economicsl.auctions.reverse.{ReverseAuction, SinglePricePointReverseAuction, SingleUnitReverseAuction}
 import org.economicsl.auctions.{Auction, SinglePricePointAuction, SingleUnitAuction}
 
 
 /** Base trait defining the interface for all `DoubleAuction` instances.
   *
-  * @tparam A the sub-type of `AskOrder with Quantity` traded via the `DoubleAuction`.
-  * @tparam B the sub-type of `BidOrder with Quantity` traded via the `DoubleAuction`.
+  * @tparam A the sub-type of `AskOrder with PriceQuantitySchedule` traded via the `DoubleAuction`.
+  * @tparam B the sub-type of `BidOrder with PriceQuantitySchedule` traded via the `DoubleAuction`.
   * @note A `DoubleAuction` is a composition of a `Auction` and a `ReverseAuction`.
   */
 sealed trait DoubleAuction[A <: AskOrder with PriceQuantitySchedule, B <: BidOrder with PriceQuantitySchedule] {
 
-  /** Place a `AskOrder with Persistent with Quantity` into the `OrderBook`.
+  /** Place a `AskOrder with Quantity` into the `OrderBook`.
     *
-    * @param order a `AskOrder with Persistent with Quantity` instance to add to the `OrderBook`
+    * @param order a `AskOrder  with Quantity` instance to add to the `OrderBook`
     * @note default implementation simply forwards the `order` to the `place` method of the `reverseAuction`.
     */
-  def place(order: A with Persistent): Unit = reverseAuction.place(order)
+  def place(order: A ): Unit = reverseAuction.place(order)
 
-  /** Place a `BidOrder with Persistent with Quantity` into the `OrderBook`.
+  /** Place a `BidOrder  with Quantity` into the `OrderBook`.
     *
-    * @param order a `BidOrder with Persistent with Quantity` instance to add to the `OrderBook`
+    * @param order a `BidOrder  with Quantity` instance to add to the `OrderBook`
     * @note default implementation simply forwards the `order` to the `place` method of the `auction`.
     */
-  def place(order: B with Persistent): Unit = auction.place(order)
+  def place(order: B ): Unit = auction.place(order)
 
   /** The underlying `Auction` mechanism used to fill `AskOrder` instances. */
-  protected def auction: Auction[A, B with Persistent]
+  protected def auction: Auction[A, B ]
 
   /** The underlying `ReverseAuction` mechanism used to fill `BidOrder` instances. */
-  protected def reverseAuction: ReverseAuction[B, A with Persistent]
+  protected def reverseAuction: ReverseAuction[B, A ]
 
 }
 
@@ -62,10 +61,10 @@ trait SingleUnitDoubleAuction[A <: AskOrder with SingleUnit, B <: LimitBidOrder 
   extends DoubleAuction[A, B] {
 
   /** The underlying `SingleAuction` mechanism used to fill `AskOrder` instances. */
-  protected def auction: SingleUnitAuction[A, B with Persistent]
+  protected def auction: SingleUnitAuction[A, B ]
 
   /** The underlying `SingleUnitReverseAuction` mechanism used to fill `BidOrder` instances. */
-  protected def reverseAuction: SingleUnitReverseAuction[B, A with Persistent]
+  protected def reverseAuction: SingleUnitReverseAuction[B, A ]
 
 }
 
@@ -80,9 +79,9 @@ trait SinglePricePointDoubleAuction[A <: AskOrder with SinglePricePoint, B <: Bi
   extends DoubleAuction[A, B] {
 
   /** The underlying `SinglePricePointAuction` mechanism used to fill `AskOrder` instances. */
-  protected def auction: SinglePricePointAuction[A, B with Persistent]
+  protected def auction: SinglePricePointAuction[A, B ]
 
   /** The underlying `SinglePricePointReverseAuction` mechanism used to fill `BidOrder` instances. */
-  protected def reverseAuction: SinglePricePointReverseAuction[B, A with Persistent]
+  protected def reverseAuction: SinglePricePointReverseAuction[B, A ]
 
 }

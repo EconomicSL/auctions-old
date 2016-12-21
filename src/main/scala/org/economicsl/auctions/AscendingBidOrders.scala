@@ -16,11 +16,10 @@ limitations under the License.
 package org.economicsl.auctions
 
 import org.economicsl.auctions.orderbooks.SortedBidOrderBook
-import org.economicsl.auctions.orders.persistent.Persistent
 import org.economicsl.auctions.orders.{AskOrder, BidOrder, PriceQuantitySchedule}
 
 
-trait AscendingBidOrders[A <: AskOrder with PriceQuantitySchedule, B <: BidOrder with Persistent with PriceQuantitySchedule] {
+trait AscendingBidOrders[A <: AskOrder with PriceQuantitySchedule, B <: BidOrder with PriceQuantitySchedule] {
   this: Auction[A, B] =>
 
   type OB = SortedBidOrderBook[B]

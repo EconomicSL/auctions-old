@@ -39,16 +39,8 @@ object MarketBidOrder {
   }
 
   private[this] case class SinglePricePointImpl(issuer: UUID, quantity: Quantity, tradable: Tradable)
-    extends MarketBidOrder with SinglePricePoint {
+    extends MarketBidOrder with SinglePricePoint
 
-    val isPersistent: Boolean = false
-
-  }
-
-  private[this] case class SingleUnitImpl(issuer: UUID, tradable: Tradable) extends MarketBidOrder with SingleUnit {
-
-    val isPersistent: Boolean = false
-
-  }
+  private[this] case class SingleUnitImpl(issuer: UUID, tradable: Tradable) extends MarketBidOrder with SingleUnit
 
 }

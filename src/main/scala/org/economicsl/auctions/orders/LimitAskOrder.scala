@@ -42,17 +42,9 @@ object LimitAskOrder {
   }
 
   private[this] case class SinglePricePointImpl(issuer: UUID, limit: Price, quantity: Quantity, tradable: Tradable)
-    extends LimitAskOrder with SinglePricePoint {
-
-    val isPersistent: Boolean = false
-
-  }
+    extends LimitAskOrder with SinglePricePoint
 
   private[this] case class SingleUnitImpl(issuer: UUID, limit: Price, tradable: Tradable)
-    extends LimitAskOrder with SingleUnit {
-
-    val isPersistent: Boolean = false
-
-  }
+    extends LimitAskOrder with SingleUnit
 
 }

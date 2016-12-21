@@ -20,19 +20,18 @@ import java.util.UUID
 import org.economicsl.auctions.Fill
 import org.economicsl.auctions.orderbooks.OrderBook
 import org.economicsl.auctions.orders._
-import org.economicsl.auctions.orders.persistent.Persistent
 
 
 /** Base trait defining the interface for all `ReverseAuction` instances. */
-sealed trait ReverseAuction[B <: BidOrder with PriceQuantitySchedule, A <: AskOrder with Persistent with PriceQuantitySchedule] {
+sealed trait ReverseAuction[B <: BidOrder with PriceQuantitySchedule, A <: AskOrder with PriceQuantitySchedule] {
 
   type OB <: OrderBook[A, collection.GenIterable[(UUID, A)]]
 
   def fill(order: B): Option[Fill]
 
-  /** Place a `LimitAskOrder with Persistent with Quantity` into the `OrderBook`.
+  /** Place a `LimitAskOrder  with Quantity` into the `OrderBook`.
     *
-    * @param order a `LimitAskOrder with Persistent with Quantity` instance to add to the `OrderBook`
+    * @param order a `LimitAskOrder  with Quantity` instance to add to the `OrderBook`
     */
   def place(order: A): Unit
 
@@ -40,11 +39,11 @@ sealed trait ReverseAuction[B <: BidOrder with PriceQuantitySchedule, A <: AskOr
 
 
 /** Base trait defining the interface for all `SingleUnitReverseAuction` instances. */
-trait SingleUnitReverseAuction[B <: BidOrder with SingleUnit, A <: AskOrder with Persistent with SingleUnit]
+trait SingleUnitReverseAuction[B <: BidOrder with SingleUnit, A <: AskOrder with SingleUnit]
   extends ReverseAuction[B, A]
 
 
 /** Base trait defining the interface for all `MultiUnitReverseAuction` instances. */
-trait SinglePricePointReverseAuction[B <: BidOrder with SinglePricePoint, A <: AskOrder with Persistent with SinglePricePoint]
+trait SinglePricePointReverseAuction[B <: BidOrder with SinglePricePoint, A <: AskOrder with SinglePricePoint]
   extends ReverseAuction[B, A]
 

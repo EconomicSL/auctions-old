@@ -19,14 +19,12 @@ import java.util.UUID
 
 import org.economicsl.auctions.Tradable
 import org.economicsl.auctions.orders.BidOrder
-import org.economicsl.auctions.orders.persistent.Persistent
 
 import scala.collection.immutable
 
 
-class SortedBidOrderBook[B <: BidOrder with Persistent] private (initialOrders: immutable.TreeSet[(UUID, B)],
-                                                                 tradable: Tradable)
-                                                                (implicit ordering: Ordering[(UUID, B)])
+class SortedBidOrderBook[B <: BidOrder] private (initialOrders: immutable.TreeSet[(UUID, B)], tradable: Tradable)
+                                                (implicit ordering: Ordering[(UUID, B)])
   extends OrderBook[B, immutable.TreeSet[(UUID, B)]] {
 
   def + (uuid: UUID, order: B): SortedBidOrderBook[B] = {
@@ -46,10 +44,7 @@ class SortedBidOrderBook[B <: BidOrder with Persistent] private (initialOrders: 
 
 object SortedBidOrderBook {
 
-  def apply[B <: BidOrder with Persistent]
-           (tradable: Tradable)
-           (implicit ordering: Ordering[(UUID, B)])
-           : SortedBidOrderBook[B] = {
+  def apply[B <: BidOrder ](tradable: Tradable)(implicit ordering: Ordering[(UUID, B)]): SortedBidOrderBook[B] = {
     new SortedBidOrderBook[B](immutable.TreeSet.empty[(UUID, B)], tradable)(ordering)
   }
 

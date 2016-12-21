@@ -19,16 +19,15 @@ import java.util.UUID
 
 import org.economicsl.auctions._
 import org.economicsl.auctions.orderbooks.SortedBidOrderBook
-import org.economicsl.auctions.orders.persistent.Persistent
 import org.economicsl.auctions.orders.{AskOrder, BidOrder, SingleUnit}
 
 
 /** Class defining a single-unit ascending price auction.
   *
   * @tparam A a sub-type of `AskOrder with SingleUnit`
-  * @tparam B a sub-type of `BidOrder with Persistent with SingleUnit`.
+  * @tparam B a sub-type of `BidOrder  with SingleUnit`.
   */
-trait AscendingPriceAuction[A <: AskOrder with SingleUnit, B <: BidOrder with Persistent with SingleUnit]
+trait AscendingPriceAuction[A <: AskOrder with SingleUnit, B <: BidOrder with SingleUnit]
   extends SingleUnitAuction[A, B] with AscendingBidOrders[A, B]
 
 
@@ -41,9 +40,9 @@ object AscendingPriceAuction {
     * @param tradable all `BidOrder` instances stored in the `SortedOrderBook` should be for the same `Tradable`.
     * @param ordering ordering used to maintain the ordering of the `SortedBidOrderBook`.
     * @tparam A a sub-type of `AskOrder with SingleUnit`
-    * @tparam B a sub-type of `BidOrder with Persistent with SingleUnit`.
+    * @tparam B a sub-type of `BidOrder  with SingleUnit`.
     */
-  def apply[A <: AskOrder with SingleUnit, B <: BidOrder with Persistent with SingleUnit]
+  def apply[A <: AskOrder with SingleUnit, B <: BidOrder with SingleUnit]
            (matchingRule: (A, SortedBidOrderBook[B]) => Option[(UUID, B)],
             pricingRule: (A, B) => Price,
             tradable: Tradable)
@@ -60,9 +59,9 @@ object AscendingPriceAuction {
     * @param tradable all `BidOrder` instances stored in the `SortedOrderBook` should be for the same `Tradable`.
     * @param ordering ordering used to maintain the ordering of the `SortedBidOrderBook`.
     * @tparam A a sub-type of `AskOrder with SingleUnit`
-    * @tparam B a sub-type of `BidOrder with Persistent with SingleUnit`.
+    * @tparam B a sub-type of `BidOrder  with SingleUnit`.
     */
-  private[this] class DefaultImpl[A <: AskOrder with SingleUnit, B <: BidOrder with Persistent with SingleUnit]
+  private[this] class DefaultImpl[A <: AskOrder with SingleUnit, B <: BidOrder with SingleUnit]
                                  (matchingRule: (A, SortedBidOrderBook[B]) => Option[(UUID, B)],
                                   pricingRule: (A, B) => Price,
                                   val tradable: Tradable)
@@ -76,9 +75,9 @@ object AscendingPriceAuction {
         Fill(order, bidOrder, price, Quantity(1))
     }
 
-    /** Place a `BidOrder with Persistent with Quantity` into the `OrderBook`.
+    /** Place a `BidOrder  with Quantity` into the `OrderBook`.
       *
-      * @param order a `BidOrder with Persistent with Quantity` instance to add to the `OrderBook`
+      * @param order a `BidOrder  with Quantity` instance to add to the `OrderBook`
       */
     def place(order: B): Unit = orderBook + (order.issuer, order)
 

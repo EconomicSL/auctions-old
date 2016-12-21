@@ -18,7 +18,6 @@ package org.economicsl.auctions.reverse.singleunit
 import java.util.UUID
 
 import org.economicsl.auctions.orderbooks.SortedAskOrderBook
-import org.economicsl.auctions.orders.persistent.Persistent
 import org.economicsl.auctions.orders.{AskOrder, BidOrder, SingleUnit}
 import org.economicsl.auctions.reverse.{DescendingAskOrders, SingleUnitReverseAuction}
 import org.economicsl.auctions.{Fill, Price, Quantity, Tradable}
@@ -27,9 +26,9 @@ import org.economicsl.auctions.{Fill, Price, Quantity, Tradable}
 /** Trait defining the interface for a single-unit descending price reverse auction.
   *
   * @tparam B a sub-type of `BidOrder with SingleUnit`.
-  * @tparam A a sub-type of `AskOrder with Persistent with SingleUnit`
+  * @tparam A a sub-type of `AskOrder  with SingleUnit`
   */
-trait DescendingPriceReverseAuction[B <: BidOrder with SingleUnit, A <: AskOrder with Persistent with SingleUnit]
+trait DescendingPriceReverseAuction[B <: BidOrder with SingleUnit, A <: AskOrder with SingleUnit]
   extends SingleUnitReverseAuction[B, A] with DescendingAskOrders[B, A]
 
 
@@ -42,9 +41,9 @@ object DescendingPriceReverseAuction {
     * @param tradable all `AskOrder` instances stored in the `SortedAskOrderBook` should be for the same `Tradable`.
     * @param ordering ordering used to maintain the ordering of the `SortedAskOrderBook`.
     * @tparam B a sub-type of `BidOrder with SingleUnit`.
-    * @tparam A a sub-type of `AskOrder with Persistent with SingleUnit`
+    * @tparam A a sub-type of `AskOrder  with SingleUnit`
     */
-  def apply[B <: BidOrder with SingleUnit, A <: AskOrder with Persistent with SingleUnit]
+  def apply[B <: BidOrder with SingleUnit, A <: AskOrder with SingleUnit]
            (matchingRule: (B, SortedAskOrderBook[A]) => Option[(UUID, A)],
             pricingRule: (B, A) => Price,
             tradable: Tradable)
@@ -61,9 +60,9 @@ object DescendingPriceReverseAuction {
     * @param tradable all `AskOrder` instances stored in the `SortedAskOrderBook` should be for the same `Tradable`.
     * @param ordering ordering used to maintain the ordering of the `SortedAskOrderBook`.
     * @tparam B a sub-type of `BidOrder with SingleUnit`.
-    * @tparam A a sub-type of `AskOrder with Persistent with SingleUnit`
+    * @tparam A a sub-type of `AskOrder  with SingleUnit`
     */
-  private[this] class DefaultImpl[B <: BidOrder with SingleUnit, A <: AskOrder with Persistent with SingleUnit]
+  private[this] class DefaultImpl[B <: BidOrder with SingleUnit, A <: AskOrder with SingleUnit]
                                  (matchingRule: (B, SortedAskOrderBook[A]) => Option[(UUID, A)],
                                   pricingRule: (B, A) => Price,
                                   val tradable: Tradable)
@@ -77,9 +76,9 @@ object DescendingPriceReverseAuction {
         Fill(askOrder, order, price, Quantity(1))
     }
 
-    /** Place a `AskOrder with Persistent with SingleUnit` into the `SortedAskOrderBook`.
+    /** Place a `AskOrder  with SingleUnit` into the `SortedAskOrderBook`.
       *
-      * @param order a `AskOrder with Persistent with SingleUnit` instance to add to the `SortedAskOrderBook`
+      * @param order a `AskOrder  with SingleUnit` instance to add to the `SortedAskOrderBook`
       */
     def place(order: A): Unit = orderBook + (order.issuer, order)
 
