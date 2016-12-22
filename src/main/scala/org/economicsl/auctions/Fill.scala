@@ -15,9 +15,27 @@ limitations under the License.
 */
 package org.economicsl.auctions
 
-import org.economicsl.auctions.orders.{AskOrder, BidOrder, PriceQuantitySchedule}
+import org.economicsl.auctions.orders._
 
 
-case class Fill(askOrder: AskOrder with PriceQuantitySchedule, bidOrder: BidOrder with PriceQuantitySchedule, price: Price, quantity: Quantity)
+sealed trait Fill[+A <: AskOrder with PriceQuantitySchedule, +B <: BidOrder with PriceQuantitySchedule ] {
+
+  def askOrder: A
+
+  def bidOrder: B
+
+  def price: Price
+
+  def quantity: Quantity
+
+}
+
+
+case class SingleUnitFill(askOrder: LimitAskOrder with SingleUnit, bidOrder: LimitBidOrder with SingleUnit, price: Price)
+  extends Fill[LimitAskOrder with SingleUnit, LimitBidOrder with SingleUnit] {
+
+  val quantity: Quantity = Quantity(1.0)
+
+}
 
 

@@ -23,7 +23,7 @@ trait UniformPricingRule extends ((FourHeapOrderBook) => Option[Price])
 
 
 /** The Mth price rule sets the price to be that of the Mth highest priced `Order with SingleUnit`. */
-class MthPriceRule extends UniformPricingRule {
+object MthPriceRule extends UniformPricingRule {
 
   def apply(orderBook: FourHeapOrderBook): Option[Price] = {
     (orderBook.unMatchedOrders.askOrders.headOption , orderBook.matchedOrders.bidOrders.headOption) match {
@@ -37,7 +37,7 @@ class MthPriceRule extends UniformPricingRule {
 
 
 /** The (M+1)st price rule sets the price to be that of the (M+1)th highest priced `Order with SingleUnit`. */
-class MPlusOnePricingRule extends UniformPricingRule {
+object MPlusOnePriceRule extends UniformPricingRule {
 
   def apply(orderBook: FourHeapOrderBook): Option[Price] = {
     (orderBook.matchedOrders.askOrders.headOption , orderBook.unMatchedOrders.bidOrders.headOption) match {

@@ -17,18 +17,21 @@ package org.economicsl.auctions.singleunit
 
 import org.economicsl.auctions.orderbooks.singleunit.FourHeapOrderBook
 import org.economicsl.auctions.orders.{LimitBidOrder, SingleUnit}
-import org.economicsl.auctions.pricing.MthPriceRule
+import org.economicsl.auctions.pricing.MPlusOnePriceRule
 import org.economicsl.auctions.{SingleUnitAuction, SingleUnitFill, Tradable}
 
 import scala.collection.immutable
 
 
-class FirstPriceSealedBidAuction(tradable: Tradable) extends SingleUnitAuction {
+class SecondPriceSealedBidAuction(tradable: Tradable) extends SingleUnitAuction {
 
   def cancel(order: LimitBidOrder with SingleUnit): Unit = { orderBook -= order }
 
-  def clear(): Option[immutable.Set[SingleUnitFill]] = MthPriceRule(orderBook) match {
-    case Some(price) => Some(orderBook.matchedOrders map { case (askOrder, bidOrder) => SingleUnitFill(askOrder, bidOrder, price) })
+  def clear(): Option[immutable.Set[SingleUnitFill]] = MPlusOnePriceRule(orderBook) match {
+    case Some(price) =>
+      val fills = orderBook.matchedOrders map { case (askOrder, bidOrder) => SingleUnitFill(askOrder, bidOrder, price) }
+      orderBook = FourHeapOrderBook()  // ???
+      Some(fills)
     case None => None
   }
 

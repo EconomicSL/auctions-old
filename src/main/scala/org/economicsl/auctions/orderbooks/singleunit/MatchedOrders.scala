@@ -53,6 +53,10 @@ class MatchedOrders private (val askOrders: immutable.TreeSet[LimitAskOrder with
     new MatchedOrders(askOrders, bidOrders - existing + incoming)
   }
 
+  def map[B](f: ((LimitAskOrder with SingleUnit, LimitBidOrder with SingleUnit)) => B): immutable.Set[B] = {
+    askOrders.zip(bidOrders).map(f)
+  }
+
 }
 
 

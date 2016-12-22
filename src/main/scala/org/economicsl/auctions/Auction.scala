@@ -15,18 +15,16 @@ limitations under the License.
 */
 package org.economicsl.auctions
 
-import java.util.UUID
-
-import org.economicsl.auctions.orderbooks.OrderBook
+import org.economicsl.auctions.orderbooks.singleunit.FourHeapOrderBook
 import org.economicsl.auctions.orders._
 
 
 /** Base trait defining the interface for all `Auction` instances. */
 sealed trait Auction[A <: AskOrder with PriceQuantitySchedule, B <: BidOrder with PriceQuantitySchedule] {
 
-  type OB <: OrderBook[B, collection.GenIterable[(UUID, B)]]
+  def cancel(order: B): Unit
 
-  def fill(order: A): Option[Fill]
+  def clear(): Option[collection.GenIterable[Fill[A, B]]]
 
   /** Place a `LimitBidOrder  with Quantity` into the `OrderBook`.
     *
@@ -34,21 +32,16 @@ sealed trait Auction[A <: AskOrder with PriceQuantitySchedule, B <: BidOrder wit
     */
   def place(order: B): Unit
 
-  protected def findMatchFor(order: A, orderBook: OB): Option[(UUID, B)]
-
-  protected def formPriceUsing(order: A, matchingOrder: B): Price
-
-  /** Underlying `OrderBook` used to store the `LimitBidOrder ` instances. */
-  protected def orderBook: OB
-
 }
 
 
 /** Base trait defining the interface for all `SingleUnitAuction` instances. */
-trait SingleUnitAuction[A <: AskOrder with SingleUnit, B <: BidOrder with SingleUnit]
-  extends Auction[A, B]
+trait SingleUnitAuction extends Auction[LimitAskOrder with SingleUnit, LimitBidOrder with SingleUnit] {
+
+  protected def orderBook: FourHeapOrderBook
+
+}
 
 
-/** Base trait defining the interface for all `MultiUnitAuction` instances. */
-trait SinglePricePointAuction[A <: AskOrder with SinglePricePoint, B <: BidOrder with SinglePricePoint]
-  extends Auction[A, B]
+/** Base trait defining the interface for all `SinglePricePointAuction` instances. */
+trait SinglePricePointAuction extends Auction[LimitAskOrder with SinglePricePoint, LimitBidOrder with SinglePricePoint]

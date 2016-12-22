@@ -15,19 +15,17 @@ limitations under the License.
 */
 package org.economicsl.auctions.reverse
 
-import java.util.UUID
 
 import org.economicsl.auctions.Fill
-import org.economicsl.auctions.orderbooks.OrderBook
 import org.economicsl.auctions.orders._
 
 
 /** Base trait defining the interface for all `ReverseAuction` instances. */
 sealed trait ReverseAuction[B <: BidOrder with PriceQuantitySchedule, A <: AskOrder with PriceQuantitySchedule] {
 
-  type OB <: OrderBook[A, collection.GenIterable[(UUID, A)]]
+  def cancel(order: A): Unit
 
-  def fill(order: B): Option[Fill]
+  def clear(): Option[collection.GenIterable[Fill[A, B]]]
 
   /** Place a `LimitAskOrder  with Quantity` into the `OrderBook`.
     *
@@ -39,11 +37,9 @@ sealed trait ReverseAuction[B <: BidOrder with PriceQuantitySchedule, A <: AskOr
 
 
 /** Base trait defining the interface for all `SingleUnitReverseAuction` instances. */
-trait SingleUnitReverseAuction[B <: BidOrder with SingleUnit, A <: AskOrder with SingleUnit]
-  extends ReverseAuction[B, A]
+trait SingleUnitReverseAuction extends ReverseAuction[LimitBidOrder with SingleUnit, LimitAskOrder with SingleUnit]
 
 
-/** Base trait defining the interface for all `MultiUnitReverseAuction` instances. */
-trait SinglePricePointReverseAuction[B <: BidOrder with SinglePricePoint, A <: AskOrder with SinglePricePoint]
-  extends ReverseAuction[B, A]
+/** Base trait defining the interface for all `SinglePricePointReverseAuction` instances. */
+trait SinglePricePointReverseAuction extends ReverseAuction[LimitBidOrder with SinglePricePoint, LimitAskOrder with SinglePricePoint]
 
