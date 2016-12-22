@@ -28,6 +28,7 @@ class MthPriceRule extends UniformPricingRule {
   def apply(orderBook: FourHeapOrderBook): Option[Price] = {
     (orderBook.unMatchedOrders.askOrders.headOption , orderBook.matchedOrders.bidOrders.headOption) match {
       case (Some(askOrder), Some(bidOrder)) => Some(if (askOrder.limit <= bidOrder.limit) askOrder.limit else bidOrder.limit)
+      case (None, Some(bidOrder)) => Some(bidOrder.limit)
       case _ => None
     }
   }
@@ -41,6 +42,7 @@ class MPlusOnePricingRule extends UniformPricingRule {
   def apply(orderBook: FourHeapOrderBook): Option[Price] = {
     (orderBook.matchedOrders.askOrders.headOption , orderBook.unMatchedOrders.bidOrders.headOption) match {
       case (Some(askOrder), Some(bidOrder)) => Some(if (askOrder.limit >= bidOrder.limit) askOrder.limit else bidOrder.limit)
+      case (Some(askOrder), None) => Some(askOrder.limit)
       case _ => None
     }
   }
