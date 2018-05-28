@@ -1,8 +1,6 @@
 package org.economicsl.auctions.multiunit
 
-/**
-  * Created by pughdr on 12/22/2016.
-  */
-trait SinglePricePointDoubleAuction {
+import org.economicsl.auctions.multiunit.orders.{AskOrder, BidOrder}
 
-}
+
+trait SinglePricePointDoubleAuction[A <: AskOrder, B <: BidOrder] extends GenDoubleAuction[A, B]

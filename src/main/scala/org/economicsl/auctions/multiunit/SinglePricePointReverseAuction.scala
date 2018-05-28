@@ -1,8 +1,7 @@
 package org.economicsl.auctions.multiunit
 
-/**
-  * Created by pughdr on 12/22/2016.
-  */
-trait SinglePricePointReverseAuction {
+import org.economicsl.auctions.multiunit.orders.{AskOrder, BidOrder}
 
-}
+
+/** Base trait defining the interface for all `SinglePricePointReverseAuction` instances. */
+trait SinglePricePointReverseAuction extends GenReverseAuction[BidOrder, AskOrder]

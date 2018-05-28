@@ -13,15 +13,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package org.economicsl.auctions.orders
+package org.economicsl.auctions
 
 import java.util.UUID
 
-import org.economicsl.auctions.Tradable
-
 
 /** Base trait defining an order for a particular tradable good. */
-sealed trait Order {
+sealed trait GenOrder {
 
   def issuer: UUID
 
@@ -30,7 +28,7 @@ sealed trait Order {
 }
 
 
-trait AskOrder extends Order
+trait GenAskOrder extends GenOrder
 
 
-trait BidOrder extends Order
+trait GenBidOrder extends GenOrder

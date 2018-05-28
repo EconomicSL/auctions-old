@@ -15,28 +15,10 @@ limitations under the License.
 */
 package org.economicsl.auctions.singleunit
 
-import org.economicsl.auctions.orderbooks.singleunit.FourHeapOrderBook
-import org.economicsl.auctions.orders.{LimitBidOrder, SingleUnit}
-import org.economicsl.auctions.pricing.MPlusOnePriceRule
-import org.economicsl.auctions.{SingleUnitAuction, SingleUnitFill, Tradable}
+import org.economicsl.auctions.Tradable
+import org.economicsl.auctions.singleunit.pricing.{MPlusOnePriceRule, UniformPrice, UniformPricingRule}
 
 import scala.collection.immutable
 
 
-class SecondPriceSealedBidAuction(tradable: Tradable) extends SingleUnitAuction {
-
-  def cancel(order: LimitBidOrder with SingleUnit): Unit = { orderBook -= order }
-
-  def clear(): Option[immutable.Set[SingleUnitFill]] = MPlusOnePriceRule(orderBook) match {
-    case Some(price) =>
-      val fills = orderBook.matchedOrders map { case (askOrder, bidOrder) => SingleUnitFill(askOrder, bidOrder, price) }
-      orderBook = FourHeapOrderBook()  // ???
-      Some(fills)
-    case None => None
-  }
-
-  def place(order: LimitBidOrder with SingleUnit): Unit = { orderBook += order }
-
-  @volatile protected var orderBook = FourHeapOrderBook()
-
-}
+class SecondPriceSealedBidAuction(tradable: Tradable) extends UniformPriceAuction(MPlusOnePriceRule, tradable) with SealedOrderBook

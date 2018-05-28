@@ -23,6 +23,7 @@ import scala.collection.immutable
 class MatchedOrders private (val askOrders: immutable.TreeSet[AskOrder], val bidOrders: immutable.TreeSet[BidOrder]) {
 
   require(askOrders.size == bidOrders.size)
+  require(bidOrders.headOption.forall(bidOrder => bidOrder.limit >= askOrders.head.limit))
 
   def + (orders: (AskOrder, BidOrder)): MatchedOrders = {
     new MatchedOrders(askOrders + orders._1, bidOrders + orders._2)
@@ -58,9 +59,10 @@ object MatchedOrders {
     *       based on `limit` price; the heap used to store store the `BidOrder` instances is
     *       ordered from low to high based on `limit` price.
     */
-  def apply(askOrdering: Ordering[AskOrder], bidOrdering: Ordering[BidOrder]): MatchedOrders = {
+  def empty(askOrdering: Ordering[AskOrder], bidOrdering: Ordering[BidOrder]): MatchedOrders = {
 
     new MatchedOrders(immutable.TreeSet.empty[AskOrder](askOrdering), immutable.TreeSet.empty[BidOrder](bidOrdering))
 
   }
+
 }

@@ -13,20 +13,24 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package org.economicsl.auctions.orders.multiunit
+package org.economicsl.auctions.multiunit.orders
 
 import java.util.UUID
 
-import org.economicsl.auctions.{Price, Quantity, Tradable, orders}
+import org.economicsl.auctions._
 
 
-trait AskOrder extends orders.AskOrder with orders.SinglePricePoint
+trait AskOrder extends GenAskOrder with SinglePricePoint {
+
+  def split(residual: Quantity): (AskOrder, AskOrder)
+
+}
 
 
 object AskOrder {
 
   /** By default, instances of `LimitAskOrder` are ordered based on `limit` price from lowest to highest. */
-  implicit def ordering[A <: AskOrder]: Ordering[A] = orders.SinglePricePoint.ordering
+  implicit def ordering[A <: AskOrder]: Ordering[A] = SinglePricePoint.ordering
 
 }
 
@@ -34,7 +38,7 @@ object AskOrder {
 case class LimitAskOrder(issuer: UUID, limit: Price, quantity: Quantity, tradable: Tradable) extends AskOrder {
 
   def split(residual: Quantity): (LimitAskOrder, LimitAskOrder) = {
-    val matched = quantity - residual
+    val matched = Quantity(quantity.value - residual.value)
     (this.copy(quantity = matched), this.copy(quantity = residual))
   }
 
@@ -43,8 +47,10 @@ case class LimitAskOrder(issuer: UUID, limit: Price, quantity: Quantity, tradabl
 
 case class MarketAskOrder(issuer: UUID, quantity: Quantity, tradable: Tradable) extends AskOrder {
 
+  val limit: Price = Price.MinValue
+
   def split (residual: Quantity): (MarketAskOrder, MarketAskOrder) = {
-    val matched = quantity - residual
+    val matched = Quantity(quantity.value - residual.value)
     (this.copy (quantity = matched), this.copy (quantity = residual) )
   }
 

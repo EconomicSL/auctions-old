@@ -15,12 +15,8 @@ limitations under the License.
 */
 package org.economicsl.auctions
 
-import org.economicsl.auctions.orders._
-import org.economicsl.auctions.orders.singleunit.LimitBidOrder
-import org.economicsl.auctions.singleunit.orders.{LimitAskOrder, LimitBidOrder}
 
-
-sealed trait Fill[+A <: GenAskOrder with PriceQuantitySchedule, +B <: GenBidOrder with PriceQuantitySchedule ] {
+trait GenFill[+A <: GenAskOrder with PriceQuantitySchedule, +B <: GenBidOrder with PriceQuantitySchedule ] {
 
   def askOrder: A
 
@@ -33,11 +29,6 @@ sealed trait Fill[+A <: GenAskOrder with PriceQuantitySchedule, +B <: GenBidOrde
 }
 
 
-case class SingleUnitFill(askOrder: LimitAskOrder with SingleUnit, bidOrder: LimitBidOrder with SingleUnit, price: Price)
-  extends Fill[LimitAskOrder with SingleUnit, LimitBidOrder with SingleUnit] {
 
-  val quantity: Quantity = Quantity(1.0)
-
-}
 
 

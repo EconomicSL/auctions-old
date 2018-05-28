@@ -57,4 +57,24 @@ package object auctions {
 
   case class Quantity(value: Double) extends AnyVal
 
+  object Quantity {
+
+    implicit def mkOrderingOps(lhs: Quantity): QuantityOrdering.Ops = QuantityOrdering.mkOrderingOps(lhs)
+
+  }
+
+
+  /** Default ordering for `Quantity` instances is low to high based on the underlying value. */
+  object QuantityOrdering extends Ordering[Quantity] {
+
+    /** Instances of `Quantity` are compared using their underlying values.
+      *
+      * @param q1 some `Quantity` instance.
+      * @param q2 another `Quantity` instance.
+      * @return -1 if `q1` is less than `q2`, 0 if `q1` equals `q2`, 1 otherwise.
+      */
+    def compare(q1: Quantity, q2: Quantity): Int = q1.value compare q2.value
+
+  }
+
 }

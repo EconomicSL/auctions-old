@@ -13,16 +13,14 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package org.economicsl.auctions.orders
-
-import org.economicsl.auctions.{Price, Quantity}
+package org.economicsl.auctions
 
 import scala.collection.immutable
 
 
 /** Mixin trait for an `Order`  `Tradable`.*/
-sealed trait PriceQuantitySchedule {
-  this: Order =>
+trait PriceQuantitySchedule {
+  this: GenOrder =>
 
   type PricePoint = (Price, Quantity)
 
@@ -34,64 +32,3 @@ sealed trait PriceQuantitySchedule {
 }
 
 
-/** Mixin trait for an `Order` for multiple units of a `Tradable`. */
-trait SinglePricePoint extends PriceQuantitySchedule {
-  this: Order =>
-
-  def limit: Price
-
-  def quantity: Quantity
-
-  def split(residual: Quantity): (Order with SinglePricePoint, Order with SinglePricePoint)
-
-  val schedule: immutable.Map[Price, Quantity] = immutable.Map(limit -> quantity)
-
-}
-
-/** Companion object for the `SinglePricePoint` trait.
-  *
-  * Defines a basic ordering for anything that mixes in the `SinglePricePoint` trait.
-  */
-object SinglePricePoint {
-
-  /** By default, all `Order` instances that mixin `SinglePricePoint` are ordered by `limit` from lowest to highest.
-    *
-    * @tparam O the sub-type of `Order with SinglePricePoint` that is being ordered.
-    * @return and `Ordering` defined over `Order with SinglePricePoint` instances of type `T`.
-    * @note if two `Order with SinglePricePoint` instances have the same `limit` price, then the ordering is based on
-    *       the unique `issuer` identifier.
-    */
-  def ordering[O <: Order with SinglePricePoint]: Ordering[O] = Ordering.by(order => (order.limit, order.issuer))
-
-}
-
-
-/** Mixin trait for an `Order` for a single unit of a `Tradable`. */
-trait SingleUnit extends PriceQuantitySchedule {
-  this: Order =>
-
-  def limit: Price
-
-  val quantity = Quantity(1)
-
-  val schedule: immutable.Map[Price, Quantity] = immutable.Map(limit -> quantity)
-
-}
-
-
-/** Companion object for the `SingleUnit` trait.
-  *
-  * Defines a basic ordering for anything that mixes in the `SingleUnit` trait.
-  */
-object SingleUnit {
-
-  /** By default, all `Order` instances that mixin `SingleUnit` are ordered by `limit` from lowest to highest.
-    *
-    * @tparam O the sub-type of `Order with SingleUnit` that is being ordered.
-    * @return and `Ordering` defined over `Order with SingleUnit` instances of type `T`.
-    * @note if two `Order with SingleUnit` instances have the same `limit` price, then the ordering is based on the
-    *       unique `issuer` identifier.
-    */
-  def ordering[O <: Order with SingleUnit]: Ordering[O] = Ordering.by(order => (order.limit, order.issuer))
-
-}

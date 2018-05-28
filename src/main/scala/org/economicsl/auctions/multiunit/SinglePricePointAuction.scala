@@ -1,8 +1,8 @@
 package org.economicsl.auctions.multiunit
 
-/**
-  * Created by pughdr on 12/22/2016.
-  */
-trait SinglePricePointAuction {
+import org.economicsl.auctions.GenAuctionLike
+import org.economicsl.auctions.multiunit.orders.{AskOrder, BidOrder}
 
-}
+
+/** Base trait defining the interface for all `SinglePricePointAuction` instances. */
+trait SinglePricePointAuction extends GenAuctionLike[AskOrder, BidOrder]

@@ -14,21 +14,20 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package org.economicsl.auctions.orders.singleunit
+package org.economicsl.auctions.singleunit.orders
 
 import java.util.UUID
 
-import org.economicsl.auctions.{Price, Tradable}
-import org.economicsl.auctions.orders
+import org.economicsl.auctions.{GenAskOrder, Price, Tradable}
 
 
-sealed trait AskOrder extends orders.AskOrder with orders.SingleUnit
+sealed trait AskOrder extends GenAskOrder with SingleUnit
 
 
 object AskOrder {
 
   /** By default, instances of `SingleUnitAskOrder` are ordered based on `limit` price from lowest to highest. */
-  implicit def ordering[A <: AskOrder]: Ordering[A] = orders.SingleUnit.ordering
+  implicit val naturalOrdering: Ordering[AskOrder] = SingleUnit.ordering
 
 }
 

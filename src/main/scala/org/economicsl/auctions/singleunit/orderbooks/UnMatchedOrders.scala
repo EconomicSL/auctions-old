@@ -22,6 +22,8 @@ import scala.collection.immutable
 
 class UnMatchedOrders private(val askOrders: immutable.TreeSet[AskOrder], val bidOrders: immutable.TreeSet[BidOrder]) {
 
+  require(bidOrders.headOption.forall(bidOrder => bidOrder.limit <= askOrders.head.limit))
+
   def + (order: AskOrder): UnMatchedOrders = new UnMatchedOrders(askOrders + order, bidOrders)
 
   def + (order: BidOrder): UnMatchedOrders = new UnMatchedOrders(askOrders, bidOrders + order)
@@ -48,7 +50,7 @@ object UnMatchedOrders {
     *       based on `limit` price; the heap used to store store the `BidOrder` instances is
     *       ordered from high to low based on `limit` price.
     */
-  def apply(askOrdering: Ordering[AskOrder], bidOrdering: Ordering[BidOrder]): UnMatchedOrders = {
+  def empty(askOrdering: Ordering[AskOrder], bidOrdering: Ordering[BidOrder]): UnMatchedOrders = {
     new UnMatchedOrders(immutable.TreeSet.empty[AskOrder](askOrdering), immutable.TreeSet.empty[BidOrder](bidOrdering))
   }
 
